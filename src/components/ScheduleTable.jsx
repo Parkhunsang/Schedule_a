@@ -5,10 +5,10 @@ function ScheduleTable({ schedules, onDelete }) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-none p-6 sm:p-8 md:p-12 mb-6 sm:mb-8 shadow-md text-center text-gray-600 dark:text-gray-400">
         <p className="text-base sm:text-lg font-medium mb-2">
-          ?뱥 ?꾩쭅 ?깅줉??鍮꾪뻾?몄씠 ?놁뒿?덈떎.
+          아직 등록된 비행편이 없습니다.
         </p>
         <p className="text-sm sm:text-base">
-          ?꾩쓽 ?쇱뿉???덈줈??鍮꾪뻾?몄쓣 異붽??대낫?몄슂!
+          위의 폼에서 새로운 비행편을 추가해보세요.
         </p>
       </div>
     );
@@ -17,29 +17,29 @@ function ScheduleTable({ schedules, onDelete }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-none p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 shadow-md w-full min-h-[400px]">
       <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
-        ?뱤 ?깅줉??鍮꾪뻾??紐⑸줉
+        등록된 비행편 목록
       </h2>
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <table className="w-full text-sm md:text-base">
           <thead>
             <tr className="bg-gradient-to-r from-purple-600 to-purple-800 text-white">
               <th className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left font-semibold">
-                ?좎쭨
+                날짜
               </th>
               <th className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left font-semibold">
-                異쒕컻
+                출발
               </th>
               <th className="table-cell px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left font-semibold">
-                ?꾩갑
+                도착
               </th>
               <th className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left font-semibold">
-                ?몃챸
+                편명
               </th>
               <th className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left font-semibold">
-                ?꾩갑吏
+                도착지
               </th>
               <th className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left font-semibold">
-                ?묒뾽
+                작업
               </th>
             </tr>
           </thead>
@@ -71,10 +71,10 @@ function ScheduleTable({ schedules, onDelete }) {
                 <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4">
                   <button
                     onClick={() => onDelete(schedule.id)}
-                    title="??젣"
+                    title="삭제"
                     className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 px-2 sm:px-3 py-1 text-sm rounded-lg hover:bg-red-600 hover:text-white dark:hover:bg-red-600 transition-all transform hover:scale-105"
                   >
-                    ?뿊截?
+                    삭제
                   </button>
                 </td>
               </tr>
@@ -83,7 +83,7 @@ function ScheduleTable({ schedules, onDelete }) {
         </table>
       </div>
       <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700 text-right text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-        <p>珥?{schedules.length}媛쒖쓽 鍮꾪뻾?몄씠 ?깅줉?섏뼱 ?덉뒿?덈떎.</p>
+        <p>총 {schedules.length}개의 비행편이 등록되어 있습니다.</p>
       </div>
     </div>
   );
