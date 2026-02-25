@@ -1,17 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ScheduleForm from "./components/ScheduleForm";
 import ScheduleTable from "./components/ScheduleTable";
+import { db } from "./firebaseConfig";
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
 
 function App() {
   const [schedules, setSchedules] = useState([]);
   const [theme, setTheme] = useState("light");
+  const [loading, setLoading] = useState(true);
 
-  const handleAddSchedule = (newSchedule) => {
-    setSchedules([...schedules, { ...newSchedule, id: Date.now() }]);
+  // Firestore에서 실시간 스케줄 가져오기
+  useEffect(() => {
+    try {
+      const schedulesCollection = collection(db, "schedules");
+      const unsubscribe = onSnapshot(schedulesCollection, (snapshot) => {
+        const schedulesData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setSchedules(schedulesData);
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Firestore 연동 오류:", error);
+      setLoading(false);
+    }
+  }, []);
+
+  const handleAddSchedule = async (newSchedule) => {
+    try {
+      const schedulesCollection = collection(db, "schedules");
+      await addDoc(schedulesCollection, {
+        ...newSchedule,
+        createdAt: new Date().toISOString(),
+      });
+      // setSchedules는 onSnapshot 리스너에서 자동으로 업데이트됨
+    } catch (error) {
+      console.error("스케줄 추가 오류:", error);
+      alert("스케줄 추가에 실패했습니다. Firebase를 설정해주세요.");
+    }
   };
 
-  const handleDeleteSchedule = (id) => {
-    setSchedules(schedules.filter((schedule) => schedule.id !== id));
+  const handleDeleteSchedule = async (id) => {
+    try {
+      const scheduleDoc = doc(db, "schedules", id);
+      await deleteDoc(scheduleDoc);
+      // setSchedules는 onSnapshot 리스너에서 자동으로 업데이트됨
+    } catch (error) {
+      console.error("스케줄 삭제 오류:", error);
+      alert("스케줄 삭제에 실패했습니다.");
+    }
   };
 
   const handleThemeChange = (selectedTheme) => {
@@ -39,11 +85,30 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 px-2 sm:px-4 py-4 sm:py-8 w-full">
         <div className="w-full h-full">
-          <ScheduleForm onAddSchedule={handleAddSchedule} />
-          <ScheduleTable
-            schedules={schedules}
-            onDelete={handleDeleteSchedule}
-          />
+          {loading && (
+            <div className="flex justify-center items-center py-12">
+              <p
+                className={`text-lg font-semibold ${
+                  theme === "light"
+                    ? "text-gray-700"
+                    : theme === "dark"
+                      ? "text-gray-300"
+                      : "text-white"
+                }`}
+              >
+                Firebase에서 데이터를 불러오는 중...
+              </p>
+            </div>
+          )}
+          {!loading && (
+            <>
+              <ScheduleForm onAddSchedule={handleAddSchedule} />
+              <ScheduleTable
+                schedules={schedules}
+                onDelete={handleDeleteSchedule}
+              />
+            </>
+          )}
 
           {/* Theme Selector */}
           <div

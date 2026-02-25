@@ -1,22 +1,88 @@
 import React, { useState } from "react";
 
-const DESTINATIONS = [
-  "서울",
-  "부산",
-  "제주",
-  "인천",
-  "대구",
-  "대전",
-  "광주",
-  "울산",
-  "로스앤젤레스",
-  "도쿄",
-  "홍콩",
-  "싱가포르",
-  "방콕",
-  "런던",
-  "뉴욕",
-];
+const DESTINATIONS = {
+  "🇯🇵 일본": [
+    "Fukuoka (FUK)",
+    "Okinawa (OKA)",
+    "Osaka (KIX)",
+    "Sapporo (CTS)",
+    "Tokyo (NRT)",
+  ],
+  "🇨🇳 중국": [
+    "Beijing Daxing Int'l (PKX)",
+    "Beijing Capital Int'l (PEK)",
+    "Beijing (PEK/PKX)",
+    "Chengdu Tianfu (TFU)",
+    "Chongqing (CKG)",
+    "Dongguan Humen HK Macau Ferry Terminal (ZTI)",
+    "Guangzhou Pazhou Ferry Terminal (PFT)",
+    "Haikou (HAK)",
+    "Hangzhou (HGH)",
+    "HZMB ZhuHai Port (HZI)",
+    "Nanjing (NKG)",
+    "Sanya (SYX)",
+    "Shanghai Pudong (PVG)",
+    "Shanghai Hongqiao (SHA)",
+    "Shanghai (SHA/PVG)",
+    "Shenzhen Airport Ferry Terminal (FYG)",
+    "Shenzhen Shekou Cruise Homeport (ZYK)",
+    "Xi'an (XIY)",
+    "Xining (XNN)",
+    "Zhongshan Ferry Terminal (ZGN)",
+    "Guangzhou Nansha Ferry Port (NSZ)",
+    "Hulunbuir (HLD)",
+    "Lijiang (LJG)",
+    "Changchun (CGQ)",
+  ],
+  "🇭🇰 홍콩": ["Hong Kong (HKG)"],
+  "🇹🇼 대만": ["Taipei (TPE)", "Kaohsiung (KHH)"],
+  "🇱🇦 라오스": ["Vientiane (VTE)", "Luang Prabang (LPQ)"],
+  "🇻🇳 베트남": ["Da Nang (DAD)", "Hanoi (HAN)"],
+  "🇦🇺 호주": [
+    "Sydney (SYD)",
+    "Melbourne (MEL)",
+    "Canberra (CBR)",
+    "Brisbane (BNE)",
+    "Gold Coast (OOL)",
+    "Sunshine Coast (MCY)",
+    "Adelaide (ADL)",
+    "Hobart (HBA)",
+    "Launceston (LST)",
+    "Cairns (CNS)",
+    "Hamilton Island (HTI)",
+    "Darwin (DRW)",
+    "Ayers Rock (AYQ)",
+    "Newcastle (NTL)",
+    "Perth (PER)",
+  ],
+  "🇲🇵 북마리아나제도": ["Saipan (SPN)"],
+  "🇨🇦 캐나다": [
+    "Vancouver (YVR)",
+    "Montreal (YUL)",
+    "Regina (YQR)",
+    "Saskatoon (YXE)",
+    "Edmonton (YEG)",
+    "Ottawa (YOW)",
+    "Winnipeg (YWG)",
+    "Victoria (YYJ)",
+    "Kelowna (YLW)",
+    "Toronto (YYZ)",
+    "Calgary (YYC)",
+  ],
+  "🇰🇭 캄보디아": ["Siem Reap (SAI)", "Phnom Penh (KTI)"],
+  "🇺🇸 미국": ["Los Angeles (LAX)"],
+  "🇹🇭 태국": [
+    "Bangkok (BKK)",
+    "Chiang Mai (CNX)",
+    "Koh Samui (USM)",
+    "Krabi (KBV)",
+    "Phuket (HKT)",
+  ],
+  "🇮🇩 인도네시아": ["Bali (DPS)", "Jakarta (CGK)"],
+  "🇲🇻 몰디브": ["Male (MLE)"],
+  "🇰🇷 한국": ["Seoul (ICN)"],
+  "🇹🇷 튀르키예": ["Istanbul (IST)"],
+};
 
 function ScheduleForm({ onAddSchedule }) {
   const [formData, setFormData] = useState({
@@ -38,7 +104,6 @@ function ScheduleForm({ onAddSchedule }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 유효성 검사
     if (
       !formData.date ||
       !formData.departureTime ||
@@ -57,7 +122,6 @@ function ScheduleForm({ onAddSchedule }) {
       destination: formData.destination,
     });
 
-    // 폼 초기화
     setFormData({
       date: "",
       departureTime: "",
@@ -90,7 +154,7 @@ function ScheduleForm({ onAddSchedule }) {
             value={formData.date}
             onChange={handleChange}
             required
-            className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition"
+            className="flex-1 px-4 py-3 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition min-h-[44px]"
           />
         </div>
 
@@ -108,7 +172,7 @@ function ScheduleForm({ onAddSchedule }) {
             value={formData.departureTime}
             onChange={handleChange}
             required
-            className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition"
+            className="flex-1 px-4 py-3 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition min-h-[44px]"
           />
         </div>
 
@@ -125,7 +189,7 @@ function ScheduleForm({ onAddSchedule }) {
             name="arrivalTime"
             value={formData.arrivalTime}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition"
+            className="flex-1 px-4 py-3 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition min-h-[44px]"
           />
         </div>
 
@@ -144,11 +208,11 @@ function ScheduleForm({ onAddSchedule }) {
             onChange={handleChange}
             placeholder="예: HX080"
             required
-            className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition"
+            className="flex-1 px-4 py-3 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition min-h-[44px]"
           />
         </div>
 
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 lg:col-span-2">
           <label
             htmlFor="destination"
             className="font-semibold mb-2 text-gray-700 dark:text-gray-200"
@@ -161,20 +225,24 @@ function ScheduleForm({ onAddSchedule }) {
             value={formData.destination}
             onChange={handleChange}
             required
-            className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition"
+            className="flex-1 px-4 py-3 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-700 dark:text-white transition min-h-[44px] font-medium"
           >
             <option value="">도착지 선택...</option>
-            {DESTINATIONS.map((dest) => (
-              <option key={dest} value={dest}>
-                {dest}
-              </option>
+            {Object.entries(DESTINATIONS).map(([country, cities]) => (
+              <optgroup key={country} label={country}>
+                {cities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>
 
         <button
           type="submit"
-          className="col-span-1 md:col-span-2 lg:col-span-3 px-6 py-2 h-fit bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all self-end"
+          className="col-span-1 sm:col-span-2 lg:col-span-1 px-6 py-3 text-base font-semibold min-h-[48px] bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all self-end"
         >
           비행편 추가
         </button>
