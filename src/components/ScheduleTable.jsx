@@ -3,7 +3,7 @@
 function ScheduleTable({ schedules, onDelete }) {
   if (schedules.length === 0) {
     return (
-      <div className="rounded-none p-6 sm:p-8 md:p-12 mb-6 sm:mb-8 text-center text-gray-600 dark:text-gray-400 bg-white shadow-md">
+      <div className="rounded-none p-6 sm:p-8 md:p-12 mb-0 text-center text-gray-600 dark:text-gray-400 bg-white">
         <p className="text-base sm:text-lg font-medium mb-2">
           아직 등록된 비행편이 없습니다.
         </p>
@@ -15,10 +15,10 @@ function ScheduleTable({ schedules, onDelete }) {
   }
 
   return (
-    <div className="rounded-none p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 w-full min-h-[400px] bg-white shadow-md">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
+    <div className="rounded-none p-[12px] sm:p-6 md:p-8 mb-0 w-full min-h-[400px] bg-white">
+      <p className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">
         등록된 비행편 목록
-      </h2>
+      </p>
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <table className="w-full text-sm md:text-base">
           <thead className="hidden sm:table-header-group">
@@ -48,7 +48,7 @@ function ScheduleTable({ schedules, onDelete }) {
               <React.Fragment key={schedule.id}>
                 <tr className="sm:hidden border-b border-gray-200 dark:border-gray-700">
                   <td className="px-3 py-3" colSpan={6}>
-                    <div className="grid grid-cols-3 gap-2 text-gray-900 dark:text-gray-100 text-xs">
+                    <div className="grid grid-cols-3 gap-2 text-gray-900 text-xs">
                       <div>
                         <p className="font-semibold">날짜</p>
                         <p className="text-sm">{schedule.date}</p>
@@ -64,25 +64,19 @@ function ScheduleTable({ schedules, onDelete }) {
                     </div>
                     <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
                       <div>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
-                          편명
-                        </p>
+                        <p className="font-semibold text-gray-900">편명</p>
                         <span className="inline-block mt-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-full text-xs font-medium">
                           {schedule.aircraft}
                         </span>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
-                          도착지
-                        </p>
+                        <p className="font-semibold text-gray-900">도착지</p>
                         <span className="inline-block mt-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 px-2 py-1 rounded-full text-xs font-medium">
                           {schedule.destination}
                         </span>
                       </div>
                       <div className="flex flex-col">
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
-                          작업
-                        </p>
+                        <p className="font-semibold text-gray-900">작업</p>
                         <button
                           onClick={() => onDelete(schedule.id)}
                           title="삭제"
@@ -96,13 +90,13 @@ function ScheduleTable({ schedules, onDelete }) {
                 </tr>
 
                 <tr className="hidden sm:table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm md:text-base">
-                  <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4 text-gray-900 dark:text-gray-100">
+                  <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4 text-gray-900">
                     {schedule.date}
                   </td>
-                  <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4 text-gray-900 dark:text-gray-100">
+                  <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4 text-gray-900">
                     {schedule.departureTime}
                   </td>
-                  <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4 text-gray-900 dark:text-gray-100">
+                  <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4 text-gray-900">
                     {schedule.arrivalTime}
                   </td>
                   <td className="px-3 sm:px-4 md:px-6 py-2 sm:py-4">

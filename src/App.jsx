@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 import ScheduleForm from "./components/ScheduleForm";
 import ScheduleTable from "./components/ScheduleTable";
+import loadingImage from "./assets/loading.jpg";
 import { db } from "./firebaseConfig";
 import {
   collection,
@@ -63,7 +64,7 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col min-h-screen bg-white text-gray-900">
       {/* Header */}
       <header className="bg-gradient-to-r from-purple-600 to-purple-800 text-white py-6 sm:py-8 px-3 sm:px-4 shadow-lg w-full">
         <div className="max-w-6xl mx-auto w-full h-12 flex items-center px-4">
@@ -75,20 +76,25 @@ function App() {
       <main className="flex-1 px-2 sm:px-4 py-4 sm:py-8 w-full">
         <div className="w-full h-full">
           {loading && (
-            <div className="flex justify-center items-center py-12">
+            <div className="flex flex-col justify-center items-center py-12 gap-4">
+              <img
+                src={loadingImage}
+                alt="로딩 이미지"
+                className="w-36 h-36 sm:w-44 sm:h-44 object-cover rounded-xl shadow-md"
+              />
               <p className="text-lg font-semibold text-gray-700">
                 Firebase에서 데이터를 불러오는 중...
               </p>
             </div>
           )}
           {!loading && (
-            <>
+            <div className="flex flex-col gap-[20px]">
               <ScheduleForm onAddSchedule={handleAddSchedule} />
               <ScheduleTable
                 schedules={schedules}
                 onDelete={handleDeleteSchedule}
               />
-            </>
+            </div>
           )}
         </div>
       </main>
