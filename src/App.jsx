@@ -1,6 +1,7 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ScheduleForm from "./components/ScheduleForm";
 import ScheduleTable from "./components/ScheduleTable";
+import WallpaperBuilder from "./components/WallpaperBuilder";
 import loadingImage from "./assets/loading.jpg";
 import {
   subscribeSchedules,
@@ -11,6 +12,8 @@ import {
 function App() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [wallpaperStep, setWallpaperStep] = useState(1);
+  const [selectedBgColor, setSelectedBgColor] = useState("#6d28d9");
 
   // Firestore에서 실시간 스케줄 가져오기
   useEffect(() => {
@@ -90,6 +93,12 @@ function App() {
           )}
           {!loading && (
             <div className="flex flex-col gap-[20px] px-3">
+              <WallpaperBuilder
+                wallpaperStep={wallpaperStep}
+                selectedBgColor={selectedBgColor}
+                onBgColorChange={setSelectedBgColor}
+                onNextStep={() => setWallpaperStep(2)}
+              />
               <ScheduleForm onAddSchedule={handleAddSchedule} />
               <ScheduleTable
                 schedules={schedules}
