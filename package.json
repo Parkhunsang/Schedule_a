@@ -23,6 +23,7 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.1",
     "@vitejs/plugin-react": "^5.1.4",
+    "figma-api": "^2.1.2-beta",
     "firebase": "^12.9.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
