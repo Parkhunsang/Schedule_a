@@ -8,7 +8,7 @@ function WallpaperResultScreen({
   onRestart,
 }) {
   return (
-    <section className="min-w-full min-w-0 flex-none px-3">
+    <section className="min-w-full min-w-0 flex-none">
       <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-5">
         <WallpaperBuilder
           title="배경화면 결과"
@@ -80,3 +80,4 @@ function WallpaperResultScreen({
 }
 
 export default WallpaperResultScreen;
+

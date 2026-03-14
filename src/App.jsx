@@ -192,46 +192,52 @@ function App() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
-      <header className="mb-10 flex h-12 w-full items-center bg-purple-300 text-white shadow-lg">
-        <h1 className="text-xl font-bold sm:text-2xl">HAN BI SCHEDULE</h1>
+      <header className="mb-10 w-full bg-purple-300 text-white shadow-lg">
+        <div className="flex h-12 w-full max-w-3xl items-center px-3">
+          <h1 className="text-xl font-bold sm:text-2xl">HAN BI SCHEDULE</h1>
+        </div>
       </header>
 
       <main className="w-full flex-1">
-        {loading ? (
-          <div className="flex min-h-screen w-full flex-col items-center justify-center gap-4 py-12">
-            <img
-              src={loadingImage}
-              alt="로딩 이미지"
-              className="h-36 w-36 rounded-xl object-cover shadow-md sm:h-44 sm:w-44"
-            />
-            <p className="text-lg font-semibold text-gray-700">
-              Firebase에서 데이터를 불러오는 중...
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between px-3 text-sm text-gray-500">
-              <span>Step {currentScreen + 1} / 3</span>
-              <div className="flex items-center gap-2" aria-hidden="true">
-                {[0, 1, 2].map((step) => (
-                  <span
-                    key={step}
-                    className={`h-2.5 w-2.5 rounded-full transition ${
-                      step === currentScreen ? "bg-purple-500" : "bg-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
+        <div className="mx-auto w-full max-w-3xl px-3">
+          {loading ? (
+            <div className="flex min-h-screen w-full flex-col items-center justify-center gap-4 py-12">
+              <img
+                src={loadingImage}
+                alt="로딩 이미지"
+                className="h-36 w-36 rounded-xl object-cover shadow-md sm:h-44 sm:w-44"
+              />
+              <p className="text-lg font-semibold text-gray-700">
+                Firebase에서 데이터를 불러오는 중...
+              </p>
             </div>
-            {renderCurrentScreen()}
-          </>
-        )}
+          ) : (
+            <>
+              <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between text-sm text-gray-500">
+                <span>Step {currentScreen + 1} / 3</span>
+                <div className="flex items-center gap-2" aria-hidden="true">
+                  {[0, 1, 2].map((step) => (
+                    <span
+                      key={step}
+                      className={`h-2.5 w-2.5 rounded-full transition ${
+                        step === currentScreen ? "bg-purple-500" : "bg-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+              {renderCurrentScreen()}
+            </>
+          )}
+        </div>
       </main>
 
-      <footer className="mt-auto w-full border-t border-gray-200 bg-white px-3 py-4 text-center sm:px-4 sm:py-6">
-        <p className="text-xs opacity-75 sm:text-sm">
-          2026 Schedule App - For Han Bi Yun
-        </p>
+      <footer className="mt-auto w-full border-t border-gray-200 bg-white">
+        <div className="mx-auto w-full max-w-3xl px-3 py-4 text-center sm:py-6">
+          <p className="text-xs opacity-75 sm:text-sm">
+            2026 Schedule App - For Han Bi Yun
+          </p>
+        </div>
       </footer>
     </div>
   );
