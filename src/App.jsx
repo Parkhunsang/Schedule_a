@@ -154,6 +154,42 @@ function App() {
     setGeneratedWallpaperUrl("");
   };
 
+  const renderCurrentScreen = () => {
+    if (currentScreen === 0) {
+      return (
+        <ScheduleEntryScreen
+          schedules={schedules}
+          onAddSchedule={handleAddSchedule}
+          onDeleteSchedule={handleDeleteSchedule}
+          onNext={() => setCurrentScreen(1)}
+        />
+      );
+    }
+
+    if (currentScreen === 1) {
+      return (
+        <WallpaperSetupScreen
+          selectedBgColor={selectedBgColor}
+          onBgColorChange={handleBgColorChange}
+          thumbnailPreviewUrl={thumbnailPreviewUrl}
+          onThumbnailSelect={handleThumbnailSelect}
+          isGenerating={isGeneratingWallpaper}
+          onPrev={() => setCurrentScreen(0)}
+          onNext={handleSetupNext}
+        />
+      );
+    }
+
+    return (
+      <WallpaperResultScreen
+        generatedWallpaperUrl={generatedWallpaperUrl}
+        onPrev={() => setCurrentScreen(1)}
+        onDownload={handleDownloadWallpaper}
+        onRestart={handleResetFlow}
+      />
+    );
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
       <header className="mb-10 flex h-12 w-full items-center bg-purple-300 text-white shadow-lg">
@@ -173,34 +209,22 @@ function App() {
             </p>
           </div>
         ) : (
-          <div className="overflow-hidden">
-            <div
-              className="flex transition-transform duration-200 ease-out"
-              style={{ transform: `translateX(-${currentScreen * 100}%)` }}
-            >
-              <ScheduleEntryScreen
-                schedules={schedules}
-                onAddSchedule={handleAddSchedule}
-                onDeleteSchedule={handleDeleteSchedule}
-                onNext={() => setCurrentScreen(1)}
-              />
-              <WallpaperSetupScreen
-                selectedBgColor={selectedBgColor}
-                onBgColorChange={handleBgColorChange}
-                thumbnailPreviewUrl={thumbnailPreviewUrl}
-                onThumbnailSelect={handleThumbnailSelect}
-                isGenerating={isGeneratingWallpaper}
-                onPrev={() => setCurrentScreen(0)}
-                onNext={handleSetupNext}
-              />
-              <WallpaperResultScreen
-                generatedWallpaperUrl={generatedWallpaperUrl}
-                onPrev={() => setCurrentScreen(1)}
-                onDownload={handleDownloadWallpaper}
-                onRestart={handleResetFlow}
-              />
+          <>
+            <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between px-3 text-sm text-gray-500">
+              <span>Step {currentScreen + 1} / 3</span>
+              <div className="flex items-center gap-2" aria-hidden="true">
+                {[0, 1, 2].map((step) => (
+                  <span
+                    key={step}
+                    className={`h-2.5 w-2.5 rounded-full transition ${
+                      step === currentScreen ? "bg-purple-500" : "bg-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+            {renderCurrentScreen()}
+          </>
         )}
       </main>
 

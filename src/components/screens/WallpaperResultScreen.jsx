@@ -12,7 +12,7 @@ function WallpaperResultScreen({
       <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-5">
         <WallpaperBuilder
           title="배경화면 결과"
-          subtitle="완성된 이미지를 확인하고 저장하거나 다시 만들 수 있어요."
+          subtitle="완성된 이미지를 확인하고 저장하거나 다시 만들 수 있어요.asdfasfasdfasdfasfasfasdfdf"
         >
           <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-5">
             <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
@@ -41,8 +41,8 @@ function WallpaperResultScreen({
                 </div>
               ) : (
                 <div className="rounded-2xl bg-gray-50 p-4 text-sm leading-6 text-gray-600">
-                  결과가 아직 없습니다. 이전 단계에서 사진을 선택하고
-                  배경화면을 생성해주세요.
+                  결과가 아직 없습니다. 이전 단계에서 사진을 선택하고 배경화면을
+                  생성해주세요.
                 </div>
               )}
             </div>
