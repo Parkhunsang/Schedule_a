@@ -8,11 +8,16 @@ import {
   addSchedule,
   deleteSchedule,
 } from "./services/scheduleService";
+import { generateWallpaperImage } from "./utils/wallpaperGenerator";
 
 function App() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentScreen, setCurrentScreen] = useState(0);
+  const [selectedBgColor, setSelectedBgColor] = useState("#6d28d9");
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState("");
+  const [generatedWallpaperUrl, setGeneratedWallpaperUrl] = useState("");
+  const [isGeneratingWallpaper, setIsGeneratingWallpaper] = useState(false);
 
   useEffect(() => {
     const loadingStartTime = Date.now();
@@ -46,6 +51,14 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (thumbnailPreviewUrl) {
+        URL.revokeObjectURL(thumbnailPreviewUrl);
+      }
+    };
+  }, [thumbnailPreviewUrl]);
+
   const handleAddSchedule = async (newSchedule) => {
     try {
       await addSchedule(newSchedule);
@@ -63,6 +76,82 @@ function App() {
       console.error("비행편 삭제 오류:", error);
       alert("비행편 삭제에 실패했습니다.");
     }
+  };
+
+  const handleBgColorChange = (nextColor) => {
+    setSelectedBgColor(nextColor);
+    setGeneratedWallpaperUrl("");
+  };
+
+  const handleThumbnailSelect = (file) => {
+    if (!file) {
+      setGeneratedWallpaperUrl("");
+      setThumbnailPreviewUrl("");
+      return;
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(file);
+    setThumbnailPreviewUrl((prev) => {
+      if (prev) {
+        URL.revokeObjectURL(prev);
+      }
+      setGeneratedWallpaperUrl("");
+      return nextPreviewUrl;
+    });
+  };
+
+  const handleGenerateWallpaper = async () => {
+    if (!thumbnailPreviewUrl) {
+      alert("이미지를 먼저 선택해주세요.");
+      return false;
+    }
+
+    setIsGeneratingWallpaper(true);
+
+    try {
+      const referenceDate = schedules[0]?.date
+        ? new Date(schedules[0].date)
+        : new Date();
+
+      const imageUrl = await generateWallpaperImage({
+        backgroundColor: selectedBgColor,
+        thumbnailImageUrl: thumbnailPreviewUrl,
+        schedules,
+        referenceDate,
+      });
+
+      setGeneratedWallpaperUrl(imageUrl);
+      return true;
+    } catch (error) {
+      console.error("바탕화면 생성 오류:", error);
+      alert("바탕화면 생성에 실패했습니다.");
+      return false;
+    } finally {
+      setIsGeneratingWallpaper(false);
+    }
+  };
+
+  const handleSetupNext = async () => {
+    const generated = await handleGenerateWallpaper();
+    if (generated) {
+      setCurrentScreen(2);
+    }
+  };
+
+  const handleDownloadWallpaper = () => {
+    if (!generatedWallpaperUrl) return;
+
+    const link = document.createElement("a");
+    link.href = generatedWallpaperUrl;
+    link.download = `schedule_wallpaper_${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  const handleResetFlow = () => {
+    setCurrentScreen(1);
+    setGeneratedWallpaperUrl("");
   };
 
   return (
@@ -96,10 +185,20 @@ function App() {
                 onNext={() => setCurrentScreen(1)}
               />
               <WallpaperSetupScreen
+                selectedBgColor={selectedBgColor}
+                onBgColorChange={handleBgColorChange}
+                thumbnailPreviewUrl={thumbnailPreviewUrl}
+                onThumbnailSelect={handleThumbnailSelect}
+                isGenerating={isGeneratingWallpaper}
                 onPrev={() => setCurrentScreen(0)}
-                onNext={() => setCurrentScreen(2)}
+                onNext={handleSetupNext}
               />
-              <WallpaperResultScreen onPrev={() => setCurrentScreen(1)} />
+              <WallpaperResultScreen
+                generatedWallpaperUrl={generatedWallpaperUrl}
+                onPrev={() => setCurrentScreen(1)}
+                onDownload={handleDownloadWallpaper}
+                onRestart={handleResetFlow}
+              />
             </div>
           </div>
         )}

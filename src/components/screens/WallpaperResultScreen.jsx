@@ -1,21 +1,26 @@
 import React from "react";
+import WallpaperBuilder from "../WallpaperBuilder";
 
-function WallpaperResultScreen({ onPrev }) {
+function WallpaperResultScreen({
+  generatedWallpaperUrl,
+  onPrev,
+  onDownload,
+  onRestart,
+}) {
   return (
-    <section className="min-w-full flex-none px-3">
-      <div className="flex min-h-[320px] flex-col justify-between rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
-        <div>
-          <p className="text-sm font-semibold text-purple-600">화면 3</p>
-          <h2 className="mt-2 text-xl font-bold text-gray-900">결과 화면</h2>
-          <p className="mt-3 text-sm text-gray-500 sm:text-base">
-            여기에 최종 월페이퍼 결과와 다운로드 UI를 넣을 예정입니다.
-          </p>
-        </div>
-        <div className="flex justify-start pt-6">
+    <section className="min-w-full min-w-0 flex-none px-3">
+      <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-5">
+        <WallpaperBuilder
+          mode="result"
+          generatedWallpaperUrl={generatedWallpaperUrl}
+          onDownload={onDownload}
+          onRestart={onRestart}
+        />
+        <div className="flex min-w-0 flex-col gap-3 pb-6 sm:flex-row sm:justify-start">
           <button
             type="button"
             onClick={onPrev}
-            className="inline-flex items-center justify-center rounded-full border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 sm:text-base"
+            className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 sm:w-auto sm:text-base"
           >
             이전
           </button>

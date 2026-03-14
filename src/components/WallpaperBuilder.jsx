@@ -15,18 +15,11 @@ const BG_PALETTE = [
   "#111827",
 ];
 
-function WallpaperBuilder({
-  wallpaperStep,
+function SetupPanel({
   selectedBgColor,
   onBgColorChange,
-  onNextStep,
   thumbnailPreviewUrl,
   onThumbnailSelect,
-  onGenerate,
-  isGenerating,
-  generatedWallpaperUrl,
-  onDownload,
-  onRestart,
 }) {
   const handleCustomColorChange = (e) => {
     onBgColorChange(e.target.value);
@@ -38,145 +31,147 @@ function WallpaperBuilder({
   };
 
   return (
-    <section className="rounded-2xl p-4 bg-gray-50 border border-gray-200 shadow-sm">
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-        iPhone Wallpaper Builder
-      </h2>
+    <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-5">
+      <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
+        <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
+          Step 1. 배경 색상을 선택하세요.
+        </p>
+        <div className="grid grid-cols-4 gap-3 xs:grid-cols-5 sm:flex sm:flex-wrap">
+          {BG_PALETTE.map((color) => (
+            <button
+              key={color}
+              type="button"
+              onClick={() => onBgColorChange(color)}
+              aria-label={`background color ${color}`}
+              className={`h-10 w-10 rounded-full border-2 transition ${
+                selectedBgColor === color
+                  ? "scale-105 border-gray-900"
+                  : "border-white/40"
+              }`}
+              style={{ backgroundColor: color }}
+            />
+          ))}
+        </div>
 
-      {wallpaperStep === 1 ? (
-        <div>
-          <p className="mb-3 text-sm sm:text-base text-gray-700">
-            Step 1: Choose background color
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {BG_PALETTE.map((color) => (
-              <button
-                key={color}
-                type="button"
-                onClick={() => onBgColorChange(color)}
-                aria-label={`background color ${color}`}
-                className={`w-10 h-10 rounded-full border-2 transition ${selectedBgColor === color ? "border-gray-900 scale-110" : "border-white/40"}`}
-                style={{ backgroundColor: color }}
-              />
-            ))}
-          </div>
+        <div className="mt-4 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+          <label
+            htmlFor="custom-bg-color"
+            className="text-sm text-gray-700 sm:min-w-[120px]"
+          >
+            직접 선택
+          </label>
+          <input
+            id="custom-bg-color"
+            type="color"
+            value={selectedBgColor}
+            onChange={handleCustomColorChange}
+            className="h-10 w-14 cursor-pointer rounded-md border border-gray-300 bg-white p-1"
+            aria-label="Choose custom color"
+          />
+        </div>
 
-          <div className="mt-4 flex items-center gap-3">
-            <label
-              htmlFor="custom-bg-color"
-              className="text-sm text-gray-700 min-w-[120px]"
-            >
-              Custom color
-            </label>
-            <input
-              id="custom-bg-color"
-              type="color"
-              value={selectedBgColor}
-              onChange={handleCustomColorChange}
-              className="h-10 w-12 rounded-md border border-gray-300 bg-white p-1 cursor-pointer"
-              aria-label="Choose custom color"
+        <div className="mt-4 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+          <span className="text-sm text-gray-700">선택한 색상</span>
+          <span
+            className="inline-flex w-fit max-w-full break-all rounded-full px-3 py-1 text-xs text-white"
+            style={{ backgroundColor: selectedBgColor }}
+          >
+            {selectedBgColor}
+          </span>
+        </div>
+      </div>
+
+      <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
+        <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
+          Step 2. 이미지를 선택하세요.
+        </p>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleThumbnailFileChange}
+          className="block w-full min-w-0 text-sm file:mb-3 file:mr-0 file:block file:w-full file:rounded-full file:border-0 file:bg-purple-100 file:px-4 file:py-3 file:text-sm file:font-semibold file:text-purple-700 hover:file:bg-purple-200 sm:file:mb-0 sm:file:mr-4 sm:file:inline-block sm:file:w-auto"
+        />
+        <p className="mt-2 break-words text-xs leading-5 text-gray-500">
+          갤러리에서 사진을 선택하세요. 정사각형 또는 세로 비율 이미지를
+          권장합니다.
+        </p>
+        {thumbnailPreviewUrl && (
+          <div className="mt-4 min-w-0">
+            <p className="mb-2 text-sm text-gray-700">미리보기</p>
+            <img
+              src={thumbnailPreviewUrl}
+              alt="thumbnail preview"
+              className="aspect-square w-full max-w-[220px] rounded-lg border border-gray-200 object-cover"
             />
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-          <div className="mt-4 flex items-center gap-3">
-            <span className="text-sm text-gray-700">Selected:</span>
-            <span
-              className="px-3 py-1 rounded-full text-xs text-white"
-              style={{ backgroundColor: selectedBgColor }}
-            >
-              {selectedBgColor}
-            </span>
-          </div>
+function ResultPanel({ generatedWallpaperUrl, onDownload, onRestart }) {
+  return (
+    <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-5">
+      <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
+        <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
+          Step 3. 결과
+        </p>
 
-          <button
-            type="button"
-            onClick={onNextStep}
-            className="mt-5 inline-flex items-center px-4 py-2 rounded-full bg-purple-500 text-white text-sm font-semibold"
-          >
-            Next: choose thumbnail
-          </button>
-        </div>
-      ) : wallpaperStep === 2 ? (
-        <div>
-          <p className="mb-3 text-sm sm:text-base text-gray-700">
-            Step 2: Select thumbnail image
-          </p>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleThumbnailFileChange}
-            className="block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-purple-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-purple-700 hover:file:bg-purple-200"
-          />
-          <p className="text-xs text-gray-500 mt-2">
-            Select a photo from your gallery. A square or vertical ratio is
-            recommended.
-          </p>
-          {thumbnailPreviewUrl && (
-            <div className="mt-4">
-              <p className="text-sm text-gray-700 mb-2">Thumbnail preview</p>
+        {generatedWallpaperUrl ? (
+          <div className="min-w-0 overflow-hidden rounded-2xl bg-[linear-gradient(180deg,#eef8ff_0%,#d7edf9_100%)] p-3 sm:p-4">
+            <div className="mx-auto w-full min-w-0 max-w-[340px] rounded-[1.8rem] bg-slate-950 p-2 shadow-[0_22px_60px_rgba(15,23,42,0.28)] sm:max-w-[380px] sm:rounded-[2.2rem]">
+              <div className="mx-auto mb-2 h-6 w-24 rounded-full bg-slate-900" />
               <img
-                src={thumbnailPreviewUrl}
-                alt="thumbnail preview"
-                className="w-44 h-44 object-cover rounded-lg border border-gray-200"
+                src={generatedWallpaperUrl}
+                alt="generated wallpaper"
+                className="block w-full rounded-[1.4rem] border border-white/30"
               />
             </div>
-          )}
-          <button
-            type="button"
-            onClick={onGenerate}
-            className="mt-5 inline-flex items-center px-4 py-2 rounded-full bg-purple-500 text-white text-sm font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed"
-            disabled={!thumbnailPreviewUrl || isGenerating}
-          >
-            {isGenerating ? "Generating..." : "Make wallpaper"}
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <p className="text-sm sm:text-base text-gray-700">Step 3: Result</p>
-          <div className="rounded-[2rem] border border-sky-100 bg-[linear-gradient(180deg,#eef8ff_0%,#d7edf9_100%)] p-4 shadow-[0_20px_60px_rgba(116,157,183,0.18)]">
-            {generatedWallpaperUrl ? (
-              <div className="mx-auto max-w-[320px] rounded-[2.5rem] border-[10px] border-slate-950 bg-slate-950 p-2 shadow-[0_30px_80px_rgba(15,23,42,0.35)]">
-                <div className="mx-auto mb-2 h-6 w-24 rounded-full bg-slate-900" />
-                <img
-                  src={generatedWallpaperUrl}
-                  alt="generated wallpaper"
-                  className="w-full rounded-[1.8rem] border border-white/30"
-                />
-              </div>
-            ) : (
-              <p className="text-sm text-gray-600">
-                No result yet. Click Make wallpaper in Step 2.
-              </p>
-            )}
-            <div className="mt-4 rounded-[1.5rem] bg-white/60 p-4 backdrop-blur">
-              <p className="font-semibold text-slate-800">
-                Figma-inspired preview
-              </p>
-              <p className="mt-1 text-sm text-slate-600">
-                Large photo header, soft sky background, and a calendar grid
-                with destination cards.
+
+            <div className="mt-4 rounded-[1.2rem] bg-white/65 p-4 backdrop-blur">
+              <p className="font-semibold text-slate-800">Preview</p>
+              <p className="mt-1 break-words text-sm leading-6 text-slate-600">
+                큰 사진 헤더와 일정 카드가 들어간 월페이퍼 결과를 여기서 확인할
+                수 있습니다.
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={onDownload}
-              disabled={!generatedWallpaperUrl}
-              className="inline-flex items-center px-4 py-2 rounded-full bg-purple-500 text-white text-sm font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              Download image
-            </button>
-            <button
-              type="button"
-              onClick={onRestart}
-              className="inline-flex items-center px-4 py-2 rounded-full border border-gray-300 text-gray-700 text-sm font-semibold"
-            >
-              Start over
-            </button>
+        ) : (
+          <div className="rounded-2xl bg-gray-50 p-4 text-sm leading-6 text-gray-600">
+            결과가 아직 없습니다. 화면 2에서 이미지를 선택하고 다음을 눌러주세요.
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
+        <button
+          type="button"
+          onClick={onDownload}
+          disabled={!generatedWallpaperUrl}
+          className="inline-flex w-full items-center justify-center rounded-full bg-purple-500 px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
+        >
+          이미지 다운로드
+        </button>
+        <button
+          type="button"
+          onClick={onRestart}
+          className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 sm:w-auto"
+        >
+          다시 만들기
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function WallpaperBuilder({ mode, ...props }) {
+  return (
+    <section className="w-full min-w-0 rounded-2xl border border-gray-200 bg-gray-50 p-3 shadow-sm sm:p-4">
+      <h2 className="mb-4 break-words text-xl font-bold text-gray-900 sm:text-2xl">
+        iPhone Wallpaper Builder
+      </h2>
+      {mode === "setup" ? <SetupPanel {...props} /> : <ResultPanel {...props} />}
     </section>
   );
 }
