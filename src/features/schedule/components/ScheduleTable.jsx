@@ -1,5 +1,5 @@
-﻿import React from "react";
-import { EVENT_TYPE_LABELS } from "../constants/eventTypes";
+import React from "react";
+import { EVENT_TYPE_LABELS } from "../../wallpaper/constants/eventTypes";
 
 function DeleteIcon() {
   return (
@@ -132,7 +132,7 @@ function ScheduleTable({ schedules, onDelete }) {
                                 </div>
                                 <div className="flex flex-col gap-1">
                                   <p className="font-semibold text-gray-500">
-                                    라벨
+                                    편명(내용)
                                   </p>
                                   <span className="inline-flex items-center justify-center rounded-full bg-[#E0F2FE] px-3 py-1 font-medium text-[#0369A1]">
                                     {aircraftLabel}
@@ -150,7 +150,7 @@ function ScheduleTable({ schedules, onDelete }) {
                                 </div>
                                 <div className="flex flex-col gap-1">
                                   <p className="font-semibold text-gray-500">
-                                    내용
+                                    도착지(내용)
                                   </p>
                                   <span className="inline-flex items-center justify-center rounded-full bg-[#CCFBF1] px-3 py-1 font-medium text-[#0F766E]">
                                     {destinationLabel}
@@ -212,7 +212,8 @@ function ScheduleTable({ schedules, onDelete }) {
           </div>
           <div className="mt-4 border-t border-gray-200 pt-4 text-right text-xs text-gray-600 sm:mt-6 sm:pt-6 sm:text-sm">
             <p>
-              총 <strong>{schedules.length}</strong>개의 일정이 등록되어 있습니다.
+              총 <strong>{schedules.length}</strong>개의 일정이 등록되어
+              있습니다.
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 
 import DESTINATIONS from "../constants/destinations";
-import { EVENT_TYPE_OPTIONS } from "../constants/eventTypes";
+import { EVENT_TYPE_OPTIONS } from "../../wallpaper/constants/eventTypes";
 
 function ScheduleForm({ onAddSchedule }) {
   const [formData, setFormData] = useState({

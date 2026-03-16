@@ -1,15 +1,15 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import loadingImage from "./assets/loading.jpg";
-import ScheduleEntryScreen from "./components/screens/ScheduleEntryScreen";
-import WallpaperSetupScreen from "./components/screens/WallpaperSetupScreen";
-import WallpaperResultScreen from "./components/screens/WallpaperResultScreen";
-import { DEFAULT_EVENT_TYPE_COLORS } from "./constants/eventTypes";
+import ScheduleEntryScreen from "./features/schedule/components/screens/ScheduleEntryScreen";
+import WallpaperSetupScreen from "./features/wallpaper/components/screens/WallpaperSetupScreen";
+import WallpaperResultScreen from "./features/wallpaper/components/screens/WallpaperResultScreen";
+import { DEFAULT_EVENT_TYPE_COLORS } from "./features/wallpaper/constants/eventTypes";
 import {
   subscribeSchedules,
   addSchedule,
   deleteSchedule,
-} from "./services/scheduleService";
-import { generateWallpaperImage } from "./utils/wallpaperGenerator";
+} from "./features/schedule/services/scheduleService";
+import { generateWallpaperImage } from "./features/wallpaper/utils/wallpaperGenerator";
 
 function App() {
   const [schedules, setSchedules] = useState([]);
