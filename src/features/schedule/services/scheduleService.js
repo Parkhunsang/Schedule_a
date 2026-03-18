@@ -1,4 +1,4 @@
-import { db } from "../../../firebaseConfig";
+import { db, firebaseConfigError } from "../../../firebaseConfig";
 import {
   collection,
   query,
@@ -10,6 +10,11 @@ import {
 } from "firebase/firestore";
 
 export const subscribeSchedules = (onData, onError) => {
+  if (!db) {
+    onError?.(new Error(firebaseConfigError));
+    return () => {};
+  }
+
   const schedulesCollection = collection(db, "schedules");
   const orderedSchedules = query(schedulesCollection, orderBy("date", "asc"));
 
@@ -28,6 +33,10 @@ export const subscribeSchedules = (onData, onError) => {
 };
 
 export const addSchedule = async (newSchedule) => {
+  if (!db) {
+    throw new Error(firebaseConfigError);
+  }
+
   const schedulesCollection = collection(db, "schedules");
 
   return addDoc(schedulesCollection, {
@@ -37,6 +46,10 @@ export const addSchedule = async (newSchedule) => {
 };
 
 export const deleteSchedule = async (id) => {
+  if (!db) {
+    throw new Error(firebaseConfigError);
+  }
+
   const scheduleDoc = doc(db, "schedules", id);
   await deleteDoc(scheduleDoc);
 };

@@ -1,8 +1,10 @@
 ﻿import React, { useEffect, useState } from "react";
 import loadingImage from "./assets/loading.jpg";
+import FirebaseConfigNotice from "./components/FirebaseConfigNotice";
 import ScheduleEntryScreen from "./features/schedule/components/screens/ScheduleEntryScreen";
 import WallpaperSetupScreen from "./features/wallpaper/components/screens/WallpaperSetupScreen";
 import WallpaperResultScreen from "./features/wallpaper/components/screens/WallpaperResultScreen";
+import { firebaseConfigError } from "./firebaseConfig";
 import { DEFAULT_EVENT_TYPE_COLORS } from "./features/wallpaper/constants/eventTypes";
 import {
   subscribeSchedules,
@@ -270,7 +272,9 @@ function App() {
 
       <main className="w-full flex-1">
         <div className="mx-auto w-full max-w-3xl px-3">
-          {loading ? (
+          {firebaseConfigError ? (
+            <FirebaseConfigNotice />
+          ) : loading ? (
             <div className="flex min-h-screen w-full flex-col items-center justify-center gap-4 py-12">
               <img
                 src={loadingImage}
