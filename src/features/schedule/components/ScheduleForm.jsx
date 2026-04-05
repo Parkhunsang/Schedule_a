@@ -10,6 +10,7 @@ function ScheduleForm({ onAddSchedule }) {
     isLayover: false,
     departureTime: "",
     arrivalTime: "",
+    hongKongDepartureDate: "",
     hongKongDepartureTime: "",
     hongKongArrivalTime: "",
     aircraft: "",
@@ -31,6 +32,7 @@ function ScheduleForm({ onAddSchedule }) {
       [name]: nextValue,
       ...(name === "isLayover" && !checked
         ? {
+            hongKongDepartureDate: "",
             hongKongDepartureTime: "",
             hongKongArrivalTime: "",
           }
@@ -43,7 +45,11 @@ function ScheduleForm({ onAddSchedule }) {
 
     const missingLayoverTimes =
       formData.isLayover &&
-      (!formData.hongKongDepartureTime || !formData.hongKongArrivalTime);
+      (
+        !formData.hongKongDepartureDate ||
+        !formData.hongKongDepartureTime ||
+        !formData.hongKongArrivalTime
+      );
 
     if (
       !formData.date ||
@@ -64,6 +70,9 @@ function ScheduleForm({ onAddSchedule }) {
         isLayover: formData.isLayover,
         departureTime: requiresTimeRange ? formData.departureTime : "-",
         arrivalTime: requiresTimeRange ? formData.arrivalTime : "-",
+        hongKongDepartureDate: formData.isLayover
+          ? formData.hongKongDepartureDate
+          : "",
         hongKongDepartureTime: formData.isLayover
           ? formData.hongKongDepartureTime
           : "-",
@@ -83,6 +92,7 @@ function ScheduleForm({ onAddSchedule }) {
       isLayover: false,
       departureTime: "",
       arrivalTime: "",
+      hongKongDepartureDate: "",
       hongKongDepartureTime: "",
       hongKongArrivalTime: "",
       aircraft: "",
@@ -195,6 +205,24 @@ function ScheduleForm({ onAddSchedule }) {
 
           {formData.isLayover ? (
             <>
+              <div className="flex flex-1 flex-col">
+                <label
+                  htmlFor="hongKongDepartureDate"
+                  className="mb-2 font-semibold text-gray-700"
+                >
+                  홍콩 출발 날짜 *
+                </label>
+                <input
+                  type="date"
+                  id="hongKongDepartureDate"
+                  name="hongKongDepartureDate"
+                  value={formData.hongKongDepartureDate}
+                  onChange={handleChange}
+                  required
+                  className="min-h-[44px] flex-1 rounded-lg border-2 border-gray-300 px-4 py-3 text-base transition focus:border-[#1565C0] focus:outline-none"
+                />
+              </div>
+
               <div className="flex flex-1 flex-col">
                 <label
                   htmlFor="hongKongDepartureTime"
