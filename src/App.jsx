@@ -1,6 +1,7 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import loadingImage from "./assets/loading.jpg";
 import FirebaseConfigNotice from "./components/FirebaseConfigNotice";
+import MonthlyScheduleListScreen from "./features/schedule/components/screens/MonthlyScheduleListScreen";
 import ScheduleEntryScreen from "./features/schedule/components/screens/ScheduleEntryScreen";
 import WallpaperSetupScreen from "./features/wallpaper/components/screens/WallpaperSetupScreen";
 import WallpaperResultScreen from "./features/wallpaper/components/screens/WallpaperResultScreen";
@@ -21,8 +22,24 @@ const SORT_OPTIONS = {
   TRAINING_DESC: "training_desc",
 };
 
+const SCREEN_KEYS = {
+  MONTH_LIST: "month_list",
+  ENTRY: "entry",
+  SETUP: "setup",
+  RESULT: "result",
+  SAVED_RESULT: "saved_result",
+};
+
+const DEFAULT_WORKFLOW_KEY = "__default__";
+const DEFAULT_BG_COLOR = "#6d28d9";
+
 const compareByDateAsc = (a, b) => a.date.localeCompare(b.date);
 const compareByDateDesc = (a, b) => b.date.localeCompare(a.date);
+const getMonthKey = (dateText = "") => String(dateText).slice(0, 7);
+const formatMonthLabel = (monthKey) => {
+  const [year, month] = monthKey.split("-");
+  return `${year}-${Number(month)}월 스케줄`;
+};
 
 const getSortedSchedules = (schedules, sortOption) => {
   const sortedSchedules = [...schedules];
@@ -51,17 +68,36 @@ const getSortedSchedules = (schedules, sortOption) => {
 function App() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState(0);
+  const [currentScreen, setCurrentScreen] = useState(SCREEN_KEYS.MONTH_LIST);
   const [sortOption, setSortOption] = useState(SORT_OPTIONS.DATE_ASC);
-  const [selectedBgColor, setSelectedBgColor] = useState("#6d28d9");
+  const [selectedBgColor, setSelectedBgColor] = useState(DEFAULT_BG_COLOR);
   const [eventTypeColors, setEventTypeColors] = useState(
     DEFAULT_EVENT_TYPE_COLORS,
   );
   const [thumbnailFileName, setThumbnailFileName] = useState("");
   const [thumbnailDimensions, setThumbnailDimensions] = useState(null);
   const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState("");
+  const [thumbnailCache, setThumbnailCache] = useState({});
   const [generatedWallpaperUrl, setGeneratedWallpaperUrl] = useState("");
   const [isGeneratingWallpaper, setIsGeneratingWallpaper] = useState(false);
+  const [activeMonthKey, setActiveMonthKey] = useState(null);
+  const [activeMonthLabel, setActiveMonthLabel] = useState("");
+  const [generatingMonthLabel, setGeneratingMonthLabel] = useState("");
+  const [newWorkflowStartedAt, setNewWorkflowStartedAt] = useState(null);
+
+  const workflowKey = activeMonthKey ?? DEFAULT_WORKFLOW_KEY;
+  const baseWorkflowSchedules = activeMonthKey
+    ? schedules.filter((schedule) => getMonthKey(schedule.date) === activeMonthKey)
+    : newWorkflowStartedAt
+      ? schedules.filter((schedule) => {
+          if (!schedule.createdAt) {
+            return false;
+          }
+
+          return schedule.createdAt >= newWorkflowStartedAt;
+        })
+      : [];
+  const workflowSchedules = getSortedSchedules(baseWorkflowSchedules, sortOption);
 
   useEffect(() => {
     const loadingStartTime = Date.now();
@@ -96,12 +132,19 @@ function App() {
   }, []);
 
   useEffect(() => {
-    return () => {
-      if (thumbnailPreviewUrl) {
-        URL.revokeObjectURL(thumbnailPreviewUrl);
-      }
-    };
-  }, [thumbnailPreviewUrl]);
+    const cachedThumbnail = thumbnailCache[workflowKey];
+
+    setThumbnailFileName(cachedThumbnail?.fileName ?? "");
+    setThumbnailDimensions(cachedThumbnail?.dimensions ?? null);
+    setThumbnailPreviewUrl(cachedThumbnail?.previewUrl ?? "");
+  }, [thumbnailCache, workflowKey]);
+
+  const updateThumbnailCache = (nextThumbnailState) => {
+    setThumbnailCache((prev) => ({
+      ...prev,
+      [workflowKey]: nextThumbnailState,
+    }));
+  };
 
   const handleAddSchedule = async (newSchedule) => {
     try {
@@ -138,34 +181,45 @@ function App() {
   const handleThumbnailSelect = (file) => {
     if (!file) {
       setGeneratedWallpaperUrl("");
-      setThumbnailFileName("");
-      setThumbnailDimensions(null);
-      setThumbnailPreviewUrl("");
+      updateThumbnailCache({
+        fileName: "",
+        dimensions: null,
+        previewUrl: "",
+      });
       return;
     }
 
-    const nextPreviewUrl = URL.createObjectURL(file);
-    setThumbnailFileName(file.name);
-    const image = new Image();
-    image.onload = () => {
-      setThumbnailDimensions({
-        width: image.naturalWidth,
-        height: image.naturalHeight,
-      });
-      URL.revokeObjectURL(image.src);
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const previewUrl = typeof reader.result === "string" ? reader.result : "";
+      const image = new Image();
+
+      image.onload = () => {
+        setGeneratedWallpaperUrl("");
+        updateThumbnailCache({
+          fileName: file.name,
+          dimensions: {
+            width: image.naturalWidth,
+            height: image.naturalHeight,
+          },
+          previewUrl,
+        });
+      };
+
+      image.onerror = () => {
+        setGeneratedWallpaperUrl("");
+        updateThumbnailCache({
+          fileName: file.name,
+          dimensions: null,
+          previewUrl,
+        });
+      };
+
+      image.src = previewUrl;
     };
-    image.onerror = () => {
-      setThumbnailDimensions(null);
-      URL.revokeObjectURL(image.src);
-    };
-    image.src = URL.createObjectURL(file);
-    setThumbnailPreviewUrl((prev) => {
-      if (prev) {
-        URL.revokeObjectURL(prev);
-      }
-      setGeneratedWallpaperUrl("");
-      return nextPreviewUrl;
-    });
+
+    reader.readAsDataURL(file);
   };
 
   const handleGenerateWallpaper = async () => {
@@ -177,15 +231,15 @@ function App() {
     setIsGeneratingWallpaper(true);
 
     try {
-      const referenceDate = schedules[0]?.date
-        ? new Date(schedules[0].date)
+      const referenceDate = workflowSchedules[0]?.date
+        ? new Date(workflowSchedules[0].date)
         : new Date();
 
       const imageUrl = await generateWallpaperImage({
         backgroundColor: selectedBgColor,
         eventTypeColors,
         thumbnailImageUrl: thumbnailPreviewUrl,
-        schedules,
+        schedules: workflowSchedules,
         referenceDate,
       });
 
@@ -203,8 +257,59 @@ function App() {
   const handleSetupNext = async () => {
     const generated = await handleGenerateWallpaper();
     if (generated) {
-      setCurrentScreen(2);
+      setCurrentScreen(
+        activeMonthKey ? SCREEN_KEYS.SAVED_RESULT : SCREEN_KEYS.RESULT,
+      );
     }
+  };
+
+  const handleOpenSavedMonth = async (monthOption) => {
+    setActiveMonthKey(monthOption.key);
+    setActiveMonthLabel(monthOption.label);
+    setGeneratingMonthLabel(monthOption.label);
+    setIsGeneratingWallpaper(true);
+
+    try {
+      const cachedThumbnail = thumbnailCache[monthOption.key];
+      const imageUrl = await generateWallpaperImage({
+        backgroundColor: selectedBgColor,
+        eventTypeColors,
+        thumbnailImageUrl: cachedThumbnail?.previewUrl ?? "",
+        schedules: monthOption.schedules,
+        referenceDate: new Date(`${monthOption.key}-01`),
+      });
+
+      setGeneratedWallpaperUrl(imageUrl);
+      setCurrentScreen(SCREEN_KEYS.SAVED_RESULT);
+    } catch (error) {
+      console.error("저장된 월별 이미지 생성 오류:", error);
+      alert("선택한 월의 이미지를 불러오지 못했습니다.");
+    } finally {
+      setIsGeneratingWallpaper(false);
+      setGeneratingMonthLabel("");
+    }
+  };
+
+  const handleStartNew = () => {
+    setActiveMonthKey(null);
+    setActiveMonthLabel("");
+    setGeneratingMonthLabel("");
+    setGeneratedWallpaperUrl("");
+    setSelectedBgColor(DEFAULT_BG_COLOR);
+    setEventTypeColors(DEFAULT_EVENT_TYPE_COLORS);
+    setThumbnailFileName("");
+    setThumbnailDimensions(null);
+    setThumbnailPreviewUrl("");
+    setThumbnailCache((prev) => ({
+      ...prev,
+      [DEFAULT_WORKFLOW_KEY]: {
+        fileName: "",
+        dimensions: null,
+        previewUrl: "",
+      },
+    }));
+    setNewWorkflowStartedAt(new Date().toISOString());
+    setCurrentScreen(SCREEN_KEYS.ENTRY);
   };
 
   const handleDownloadWallpaper = () => {
@@ -218,23 +323,57 @@ function App() {
     link.remove();
   };
 
-  const visibleSchedules = getSortedSchedules(schedules, sortOption);
+  const monthOptions = Array.from(
+    schedules.reduce((map, schedule) => {
+      const monthKey = getMonthKey(schedule.date);
+      if (!monthKey) return map;
+      if (!map.has(monthKey)) {
+        map.set(monthKey, []);
+      }
+      map.get(monthKey).push(schedule);
+      return map;
+    }, new Map()),
+  )
+    .map(([key, monthSchedules]) => ({
+      key,
+      label: formatMonthLabel(key),
+      schedules: [...monthSchedules].sort(compareByDateAsc),
+    }))
+    .sort((a, b) => b.key.localeCompare(a.key));
+
+  const shouldShowStepper =
+    currentScreen === SCREEN_KEYS.ENTRY ||
+    currentScreen === SCREEN_KEYS.SETUP ||
+    currentScreen === SCREEN_KEYS.RESULT;
 
   const renderCurrentScreen = () => {
-    if (currentScreen === 0) {
+    if (currentScreen === SCREEN_KEYS.MONTH_LIST) {
       return (
-        <ScheduleEntryScreen
-          schedules={visibleSchedules}
-          sortOption={sortOption}
-          onChangeSortOption={setSortOption}
-          onAddSchedule={handleAddSchedule}
-          onDeleteSchedule={handleDeleteSchedule}
-          onNext={() => setCurrentScreen(1)}
+        <MonthlyScheduleListScreen
+          monthOptions={monthOptions}
+          isGenerating={isGeneratingWallpaper}
+          generatingLabel={generatingMonthLabel}
+          onSelectMonth={handleOpenSavedMonth}
+          onStartNew={handleStartNew}
         />
       );
     }
 
-    if (currentScreen === 1) {
+    if (currentScreen === SCREEN_KEYS.ENTRY) {
+      return (
+        <ScheduleEntryScreen
+          schedules={workflowSchedules}
+          sortOption={sortOption}
+          onChangeSortOption={setSortOption}
+          onAddSchedule={handleAddSchedule}
+          onDeleteSchedule={handleDeleteSchedule}
+          onPrev={() => setCurrentScreen(SCREEN_KEYS.MONTH_LIST)}
+          onNext={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
+        />
+      );
+    }
+
+    if (currentScreen === SCREEN_KEYS.SETUP) {
       return (
         <WallpaperSetupScreen
           selectedBgColor={selectedBgColor}
@@ -246,8 +385,25 @@ function App() {
           thumbnailPreviewUrl={thumbnailPreviewUrl}
           onThumbnailSelect={handleThumbnailSelect}
           isGenerating={isGeneratingWallpaper}
-          onPrev={() => setCurrentScreen(0)}
+          onPrev={() => setCurrentScreen(SCREEN_KEYS.ENTRY)}
           onNext={handleSetupNext}
+        />
+      );
+    }
+
+    if (currentScreen === SCREEN_KEYS.SAVED_RESULT) {
+      return (
+        <WallpaperResultScreen
+          generatedWallpaperUrl={generatedWallpaperUrl}
+          onPrev={() => setCurrentScreen(SCREEN_KEYS.MONTH_LIST)}
+          onGoStepOne={() => setCurrentScreen(SCREEN_KEYS.ENTRY)}
+          onGoStepTwo={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
+          onDownload={handleDownloadWallpaper}
+          title={activeMonthLabel || "저장된 스케줄 결과"}
+          subtitle="저장된 월별 일정으로 만든 이미지 목업입니다."
+          stepLabel=""
+          showPrevButton
+          showHomeButton={false}
         />
       );
     }
@@ -255,8 +411,10 @@ function App() {
     return (
       <WallpaperResultScreen
         generatedWallpaperUrl={generatedWallpaperUrl}
-        onPrev={() => setCurrentScreen(1)}
-        onGoHome={() => setCurrentScreen(0)}
+        onPrev={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
+        onGoHome={() => setCurrentScreen(SCREEN_KEYS.MONTH_LIST)}
+        onGoStepOne={() => setCurrentScreen(SCREEN_KEYS.ENTRY)}
+        onGoStepTwo={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
         onDownload={handleDownloadWallpaper}
       />
     );
@@ -287,19 +445,33 @@ function App() {
             </div>
           ) : (
             <>
-              <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between text-sm text-gray-500">
-                <span>Step {currentScreen + 1} / 3</span>
-                <div className="flex items-center gap-2" aria-hidden="true">
-                  {[0, 1, 2].map((step) => (
-                    <span
-                      key={step}
-                      className={`h-2.5 w-2.5 rounded-full transition ${
-                        step === currentScreen ? "bg-[#1565C0]" : "bg-gray-300"
-                      }`}
-                    />
-                  ))}
+              {shouldShowStepper ? (
+                <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between text-sm text-gray-500">
+                  <span>
+                    Step{" "}
+                    {{
+                      [SCREEN_KEYS.ENTRY]: 1,
+                      [SCREEN_KEYS.SETUP]: 2,
+                      [SCREEN_KEYS.RESULT]: 3,
+                    }[currentScreen]}{" "}
+                    / 3
+                  </span>
+                  <div className="flex items-center gap-2" aria-hidden="true">
+                    {[SCREEN_KEYS.ENTRY, SCREEN_KEYS.SETUP, SCREEN_KEYS.RESULT].map(
+                      (step) => (
+                        <span
+                          key={step}
+                          className={`h-2.5 w-2.5 rounded-full transition ${
+                            step === currentScreen
+                              ? "bg-[#1565C0]"
+                              : "bg-gray-300"
+                          }`}
+                        />
+                      ),
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : null}
               {renderCurrentScreen()}
             </>
           )}

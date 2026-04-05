@@ -8,6 +8,7 @@ function ScheduleEntryScreen({
   onChangeSortOption,
   onAddSchedule,
   onDeleteSchedule,
+  onPrev,
   onNext,
 }) {
   return (
@@ -31,7 +32,14 @@ function ScheduleEntryScreen({
           </label>
         </div>
         <ScheduleTable schedules={schedules} onDelete={onDeleteSchedule} />
-        <div className="flex justify-end pb-6">
+        <div className="flex flex-col gap-3 pb-6 sm:flex-row sm:justify-between">
+          <button
+            type="button"
+            onClick={onPrev}
+            className="inline-flex items-center justify-center rounded-full border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 sm:text-base"
+          >
+            이전
+          </button>
           <button
             type="button"
             onClick={onNext}

@@ -6,19 +6,29 @@ function WallpaperResultScreen({
   onPrev,
   onGoHome,
   onDownload,
+  onGoStepOne,
+  onGoStepTwo,
+  title = "배경화면 결과",
+  subtitle = "완성된 이미지를 확인하고 저장하거나 다시 만들 수 있어요.",
+  stepLabel = "Step 4. 결과",
+  showPrevButton = true,
+  showHomeButton = true,
+  showStepMoveButtons = true,
 }) {
   return (
     <section className="min-w-full min-w-0 flex-none">
       <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-5">
         <WallpaperBuilder
-          title="배경화면 결과"
-          subtitle="완성된 이미지를 확인하고 저장하거나 다시 만들 수 있어요."
+          title={title}
+          subtitle={subtitle}
         >
           <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-5">
             <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
-              <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
-                Step 4. 결과
-              </p>
+              {stepLabel ? (
+                <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
+                  {stepLabel}
+                </p>
+              ) : null}
 
               {generatedWallpaperUrl ? (
                 <div className="min-w-0 overflow-hidden rounded-2xl bg-[linear-gradient(180deg,#eef8ff_0%,#d7edf9_100%)] p-3 sm:p-4">
@@ -55,25 +65,47 @@ function WallpaperResultScreen({
               >
                 이미지 다운로드
               </button>
-              <button
-                type="button"
-                onClick={onPrev}
-                className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 sm:w-auto"
-              >
-                이전
-              </button>
+              {showStepMoveButtons ? (
+                <button
+                  type="button"
+                  onClick={onGoStepOne}
+                  className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 sm:w-auto"
+                >
+                  1단계로 이동
+                </button>
+              ) : null}
+              {showStepMoveButtons ? (
+                <button
+                  type="button"
+                  onClick={onGoStepTwo}
+                  className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 sm:w-auto"
+                >
+                  2단계로 이동
+                </button>
+              ) : null}
+              {showPrevButton ? (
+                <button
+                  type="button"
+                  onClick={onPrev}
+                  className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 sm:w-auto"
+                >
+                  이전
+                </button>
+              ) : null}
             </div>
           </div>
         </WallpaperBuilder>
-        <div className="flex min-w-0 flex-col gap-3 pb-6 sm:flex-row sm:justify-start">
-          <button
-            type="button"
-            onClick={onGoHome}
-            className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 sm:w-auto sm:text-base"
-          >
-            처음으로
-          </button>
-        </div>
+        {showHomeButton ? (
+          <div className="flex min-w-0 flex-col gap-3 pb-6 sm:flex-row sm:justify-start">
+            <button
+              type="button"
+              onClick={onGoHome}
+              className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 sm:w-auto sm:text-base"
+            >
+              처음으로
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );
