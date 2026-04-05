@@ -83,6 +83,7 @@ function App() {
   const [activeMonthKey, setActiveMonthKey] = useState(null);
   const [activeMonthLabel, setActiveMonthLabel] = useState("");
   const [generatingMonthLabel, setGeneratingMonthLabel] = useState("");
+  const [deletingMonthKey, setDeletingMonthKey] = useState("");
   const [newWorkflowStartedAt, setNewWorkflowStartedAt] = useState(null);
 
   const workflowKey = activeMonthKey ?? DEFAULT_WORKFLOW_KEY;
@@ -162,6 +163,36 @@ function App() {
     } catch (error) {
       console.error("비행편 삭제 오류:", error);
       alert("비행편 삭제에 실패했습니다.");
+    }
+  };
+
+  const handleDeleteMonth = async (monthOption) => {
+    const shouldDelete = window.confirm(
+      `${monthOption.label}의 일정 ${monthOption.schedules.length}개를 모두 삭제할까요?`,
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setDeletingMonthKey(monthOption.key);
+
+    try {
+      await Promise.all(
+        monthOption.schedules.map((schedule) => deleteSchedule(schedule.id)),
+      );
+
+      if (activeMonthKey === monthOption.key) {
+        setActiveMonthKey(null);
+        setActiveMonthLabel("");
+        setGeneratedWallpaperUrl("");
+        setCurrentScreen(SCREEN_KEYS.MONTH_LIST);
+      }
+    } catch (error) {
+      console.error("월별 스케줄 삭제 오류:", error);
+      alert("월별 스케줄 삭제에 실패했습니다.");
+    } finally {
+      setDeletingMonthKey("");
     }
   };
 
@@ -353,7 +384,9 @@ function App() {
           monthOptions={monthOptions}
           isGenerating={isGeneratingWallpaper}
           generatingLabel={generatingMonthLabel}
+          deletingMonthKey={deletingMonthKey}
           onSelectMonth={handleOpenSavedMonth}
+          onDeleteMonth={handleDeleteMonth}
           onStartNew={handleStartNew}
         />
       );

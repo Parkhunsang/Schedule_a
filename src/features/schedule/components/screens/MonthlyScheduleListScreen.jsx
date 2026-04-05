@@ -4,7 +4,9 @@ function MonthlyScheduleListScreen({
   monthOptions,
   isGenerating,
   generatingLabel,
+  deletingMonthKey,
   onSelectMonth,
+  onDeleteMonth,
   onStartNew,
 }) {
   return (
@@ -23,29 +25,46 @@ function MonthlyScheduleListScreen({
 
           {monthOptions.length > 0 ? (
             <div className="space-y-3">
-              {monthOptions.map((option) => (
-                <button
-                  key={option.key}
-                  type="button"
-                  onClick={() => onSelectMonth(option)}
-                  disabled={isGenerating}
-                  className="flex w-full items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 text-left transition hover:border-[#1565C0] hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <div>
-                    <p className="text-base font-semibold text-gray-900 sm:text-lg">
-                      {option.label}
-                    </p>
-                    <p className="mt-1 text-sm text-gray-500">
-                      총 {option.schedules.length}개의 일정
-                    </p>
+              {monthOptions.map((option) => {
+                const isDeleting = deletingMonthKey === option.key;
+                const isOpening =
+                  isGenerating && generatingLabel === option.label;
+
+                return (
+                  <div
+                    key={option.key}
+                    className="flex items-stretch gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => onSelectMonth(option)}
+                      disabled={isGenerating || isDeleting}
+                      className="flex flex-1 items-center justify-between rounded-xl px-3 py-3 text-left transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <div>
+                        <p className="text-base font-semibold text-gray-900 sm:text-lg">
+                          {option.label}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500">
+                          총 {option.schedules.length}개의 일정
+                        </p>
+                      </div>
+                      <span className="text-sm font-semibold text-[#1565C0]">
+                        {isOpening ? "생성 중..." : "열기"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onDeleteMonth(option)}
+                      disabled={isGenerating || isDeleting}
+                      className="shrink-0 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isDeleting ? "삭제 중..." : "삭제"}
+                    </button>
                   </div>
-                  <span className="text-sm font-semibold text-[#1565C0]">
-                    {isGenerating && generatingLabel === option.label
-                      ? "생성 중..."
-                      : "열기"}
-                  </span>
-                </button>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
