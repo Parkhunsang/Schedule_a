@@ -88,7 +88,9 @@ function App() {
 
   const workflowKey = activeMonthKey ?? DEFAULT_WORKFLOW_KEY;
   const baseWorkflowSchedules = activeMonthKey
-    ? schedules.filter((schedule) => getMonthKey(schedule.date) === activeMonthKey)
+    ? schedules.filter(
+        (schedule) => getMonthKey(schedule.date) === activeMonthKey,
+      )
     : newWorkflowStartedAt
       ? schedules.filter((schedule) => {
           if (!schedule.createdAt) {
@@ -98,7 +100,10 @@ function App() {
           return schedule.createdAt >= newWorkflowStartedAt;
         })
       : [];
-  const workflowSchedules = getSortedSchedules(baseWorkflowSchedules, sortOption);
+  const workflowSchedules = getSortedSchedules(
+    baseWorkflowSchedules,
+    sortOption,
+  );
 
   useEffect(() => {
     const loadingStartTime = Date.now();
@@ -482,26 +487,30 @@ function App() {
                 <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between text-sm text-gray-500">
                   <span>
                     Step{" "}
-                    {{
-                      [SCREEN_KEYS.ENTRY]: 1,
-                      [SCREEN_KEYS.SETUP]: 2,
-                      [SCREEN_KEYS.RESULT]: 3,
-                    }[currentScreen]}{" "}
+                    {
+                      {
+                        [SCREEN_KEYS.ENTRY]: 1,
+                        [SCREEN_KEYS.SETUP]: 2,
+                        [SCREEN_KEYS.RESULT]: 3,
+                      }[currentScreen]
+                    }{" "}
                     / 3
                   </span>
                   <div className="flex items-center gap-2" aria-hidden="true">
-                    {[SCREEN_KEYS.ENTRY, SCREEN_KEYS.SETUP, SCREEN_KEYS.RESULT].map(
-                      (step) => (
-                        <span
-                          key={step}
-                          className={`h-2.5 w-2.5 rounded-full transition ${
-                            step === currentScreen
-                              ? "bg-[#1565C0]"
-                              : "bg-gray-300"
-                          }`}
-                        />
-                      ),
-                    )}
+                    {[
+                      SCREEN_KEYS.ENTRY,
+                      SCREEN_KEYS.SETUP,
+                      SCREEN_KEYS.RESULT,
+                    ].map((step) => (
+                      <span
+                        key={step}
+                        className={`h-2.5 w-2.5 rounded-full transition ${
+                          step === currentScreen
+                            ? "bg-[#1565C0]"
+                            : "bg-gray-300"
+                        }`}
+                      />
+                    ))}
                   </div>
                 </div>
               ) : null}
