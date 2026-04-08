@@ -148,7 +148,18 @@ const buildScheduleMap = (schedules, referenceDate, eventTypeColors) => {
     if (parsed.year !== year || parsed.month - 1 !== month) return;
 
     if (schedule.isLayover && layoverEndDate) {
-      const middleOffset = Math.floor(getDayDiff(startDate, layoverEndDate) / 2);
+      const layoverDayDiff = getDayDiff(startDate, layoverEndDate);
+
+      if (layoverDayDiff === 1) {
+        overlayEvents.push({
+          schedule,
+          startKey: toDateKey(startDate),
+          endKey: toDateKey(layoverEndDate),
+        });
+        return;
+      }
+
+      const middleOffset = Math.floor(layoverDayDiff / 2);
       const middleDate = addDays(startDate, middleOffset);
 
       if (
