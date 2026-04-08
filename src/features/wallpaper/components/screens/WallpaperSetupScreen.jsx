@@ -47,12 +47,12 @@ function WallpaperSetupScreen({
       <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-5">
         <WallpaperBuilder
           title="배경화면 설정"
-          subtitle="배경 색상, 이벤트 블럭 색상, 사진을 선택한 뒤 배경화면을 생성하세요."
+          subtitle="배경 색상, 이벤트 블럭 색상, 사진을 선택해서 배경화면을 생성하세요."
         >
           <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-5">
             <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
               <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
-                Step 1. 배경 색상을 선택하세요
+                Step 1. 배경 색상을 선택하세요.
               </p>
               <div className="grid grid-cols-4 gap-3 sm:flex sm:flex-wrap">
                 {BG_PALETTE.map((color) => (
@@ -101,7 +101,7 @@ function WallpaperSetupScreen({
 
             <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
               <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
-                Step 2. 이벤트 블럭 색상을 설정하세요
+                Step 2. 이벤트 블럭 색상을 설정하세요.
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {BLOCK_COLOR_OPTIONS.map(({ value, label }) => (
@@ -139,7 +139,7 @@ function WallpaperSetupScreen({
 
             <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">
               <p className="mb-3 text-sm font-medium text-gray-700 sm:text-base">
-                Step 3. 사진을 선택하세요
+                Step 3. 사진을 선택하세요.
               </p>
               <input
                 type="file"
@@ -149,7 +149,7 @@ function WallpaperSetupScreen({
               />
               {thumbnailFileName ? (
                 <p className="mt-2 break-words text-xs leading-5 text-gray-600">
-                  선택된 파일: {thumbnailFileName}
+                  선택한 파일: {thumbnailFileName}
                 </p>
               ) : null}
               {thumbnailDimensions ? (
@@ -159,8 +159,9 @@ function WallpaperSetupScreen({
                 </p>
               ) : null}
               <p className="mt-2 break-words text-xs leading-5 text-gray-500">
-                갤러리에서 사진을 선택해주세요. <br></br>권장 크기는 가로:
-                360px, 세로: 288px입니다.
+                갤러리에서 사진을 선택해주세요.
+                <br />
+                권장 크기는 가로 360px, 세로 288px입니다.
               </p>
               {thumbnailPreviewUrl ? (
                 <div className="mt-4 min-w-0">
@@ -173,7 +174,7 @@ function WallpaperSetupScreen({
                 </div>
               ) : (
                 <div className="mt-4 rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-sm text-gray-500">
-                  아직 선택한 사진이 없습니다.
+                  아직 선택된 사진이 없습니다.
                 </div>
               )}
             </div>

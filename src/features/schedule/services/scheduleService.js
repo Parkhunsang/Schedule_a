@@ -38,10 +38,11 @@ export const addSchedule = async (newSchedule) => {
   }
 
   const schedulesCollection = collection(db, "schedules");
+  const createdAt = newSchedule.createdAt ?? new Date().toISOString();
 
   return addDoc(schedulesCollection, {
     ...newSchedule,
-    createdAt: new Date().toISOString(),
+    createdAt,
   });
 };
 

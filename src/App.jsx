@@ -1,109 +1,71 @@
 import React, { useEffect, useState } from "react";
 import loadingImage from "./assets/loading.jpg";
+import AppScreenContent from "./components/AppScreenContent";
 import FirebaseConfigNotice from "./components/FirebaseConfigNotice";
-import MonthlyScheduleListScreen from "./features/schedule/components/screens/MonthlyScheduleListScreen";
-import ScheduleEntryScreen from "./features/schedule/components/screens/ScheduleEntryScreen";
-import WallpaperSetupScreen from "./features/wallpaper/components/screens/WallpaperSetupScreen";
-import WallpaperResultScreen from "./features/wallpaper/components/screens/WallpaperResultScreen";
 import { firebaseConfigError } from "./firebaseConfig";
-import { DEFAULT_EVENT_TYPE_COLORS } from "./features/wallpaper/constants/eventTypes";
+import { useMonthlyScheduleWorkflow } from "./hooks/useMonthlyScheduleWorkflow";
+import { useThumbnailWorkflow } from "./hooks/useThumbnailWorkflow";
+import { useWorkflowStore } from "./store/useWorkflowStore";
 import {
-  subscribeSchedules,
   addSchedule,
   deleteSchedule,
+  subscribeSchedules,
 } from "./features/schedule/services/scheduleService";
 import { generateWallpaperImage } from "./features/wallpaper/utils/wallpaperGenerator";
+import {
+  DEFAULT_WORKFLOW_KEY,
+  SCREEN_KEYS,
+  shouldShowStepper,
+} from "./utils/scheduleViewUtils";
 
-const SORT_OPTIONS = {
-  DATE_ASC: "date_asc",
-  DATE_DESC: "date_desc",
-  FLIGHT_DESC: "flight_desc",
-  STANDBY_DESC: "standby_desc",
-  TRAINING_DESC: "training_desc",
-};
-
-const SCREEN_KEYS = {
-  MONTH_LIST: "month_list",
-  ENTRY: "entry",
-  SETUP: "setup",
-  RESULT: "result",
-  SAVED_RESULT: "saved_result",
-};
-
-const DEFAULT_WORKFLOW_KEY = "__default__";
-const DEFAULT_BG_COLOR = "#6d28d9";
-
-const compareByDateAsc = (a, b) => a.date.localeCompare(b.date);
-const compareByDateDesc = (a, b) => b.date.localeCompare(a.date);
-const getMonthKey = (dateText = "") => String(dateText).slice(0, 7);
-const formatMonthLabel = (monthKey) => {
-  const [year, month] = monthKey.split("-");
-  return `${year}-${Number(month)}월 스케줄`;
-};
-
-const getSortedSchedules = (schedules, sortOption) => {
-  const sortedSchedules = [...schedules];
-
-  switch (sortOption) {
-    case SORT_OPTIONS.DATE_DESC:
-      return sortedSchedules.sort(compareByDateDesc);
-    case SORT_OPTIONS.FLIGHT_DESC:
-      return sortedSchedules
-        .filter((schedule) => schedule.eventType === "flight")
-        .sort(compareByDateDesc);
-    case SORT_OPTIONS.STANDBY_DESC:
-      return sortedSchedules
-        .filter((schedule) => schedule.eventType === "standby")
-        .sort(compareByDateDesc);
-    case SORT_OPTIONS.TRAINING_DESC:
-      return sortedSchedules
-        .filter((schedule) => schedule.eventType === "training")
-        .sort(compareByDateDesc);
-    case SORT_OPTIONS.DATE_ASC:
-    default:
-      return sortedSchedules.sort(compareByDateAsc);
-  }
+const STEP_MAP = {
+  [SCREEN_KEYS.ENTRY]: 1,
+  [SCREEN_KEYS.SETUP]: 2,
+  [SCREEN_KEYS.RESULT]: 3,
 };
 
 function App() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState(SCREEN_KEYS.MONTH_LIST);
-  const [sortOption, setSortOption] = useState(SORT_OPTIONS.DATE_ASC);
-  const [selectedBgColor, setSelectedBgColor] = useState(DEFAULT_BG_COLOR);
-  const [eventTypeColors, setEventTypeColors] = useState(
-    DEFAULT_EVENT_TYPE_COLORS,
-  );
-  const [thumbnailFileName, setThumbnailFileName] = useState("");
-  const [thumbnailDimensions, setThumbnailDimensions] = useState(null);
-  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState("");
-  const [thumbnailCache, setThumbnailCache] = useState({});
-  const [generatedWallpaperUrl, setGeneratedWallpaperUrl] = useState("");
   const [isGeneratingWallpaper, setIsGeneratingWallpaper] = useState(false);
-  const [activeMonthKey, setActiveMonthKey] = useState(null);
-  const [activeMonthLabel, setActiveMonthLabel] = useState("");
-  const [generatingMonthLabel, setGeneratingMonthLabel] = useState("");
-  const [deletingMonthKey, setDeletingMonthKey] = useState("");
-  const [newWorkflowStartedAt, setNewWorkflowStartedAt] = useState(null);
-
-  const workflowKey = activeMonthKey ?? DEFAULT_WORKFLOW_KEY;
-  const baseWorkflowSchedules = activeMonthKey
-    ? schedules.filter(
-        (schedule) => getMonthKey(schedule.date) === activeMonthKey,
-      )
-    : newWorkflowStartedAt
-      ? schedules.filter((schedule) => {
-          if (!schedule.createdAt) {
-            return false;
-          }
-
-          return schedule.createdAt >= newWorkflowStartedAt;
-        })
-      : [];
-  const workflowSchedules = getSortedSchedules(
-    baseWorkflowSchedules,
-    sortOption,
+  const currentScreen = useWorkflowStore((state) => state.currentScreen);
+  const sortOption = useWorkflowStore((state) => state.sortOption);
+  const selectedBgColor = useWorkflowStore((state) => state.selectedBgColor);
+  const eventTypeColors = useWorkflowStore((state) => state.eventTypeColors);
+  const generatedWallpaperUrl = useWorkflowStore(
+    (state) => state.generatedWallpaperUrl,
   );
+  const setCurrentScreen = useWorkflowStore((state) => state.setCurrentScreen);
+  const setSortOption = useWorkflowStore((state) => state.setSortOption);
+  const setSelectedBgColor = useWorkflowStore(
+    (state) => state.setSelectedBgColor,
+  );
+  const setEventTypeColors = useWorkflowStore((state) => state.setEventTypeColors);
+  const setGeneratedWallpaperUrl = useWorkflowStore(
+    (state) => state.setGeneratedWallpaperUrl,
+  );
+  const resetWorkflowVisuals = useWorkflowStore((state) => state.resetWorkflowVisuals);
+
+  const workflow = useMonthlyScheduleWorkflow({
+    schedules,
+    sortOption,
+    deleteSchedule,
+    screenKeys: SCREEN_KEYS,
+  });
+
+  const workflowKey = workflow.activeMonthKey ?? DEFAULT_WORKFLOW_KEY;
+
+  const {
+    thumbnailFileName,
+    thumbnailDimensions,
+    thumbnailPreviewUrl,
+    thumbnailCache,
+    handleThumbnailSelect,
+    resetDefaultWorkflowThumbnail,
+  } = useThumbnailWorkflow({
+    workflowKey,
+    defaultWorkflowKey: DEFAULT_WORKFLOW_KEY,
+  });
 
   useEffect(() => {
     const loadingStartTime = Date.now();
@@ -131,33 +93,38 @@ function App() {
 
     return () => {
       unsubscribe();
+
       if (loadingTimer) {
         clearTimeout(loadingTimer);
       }
     };
   }, []);
 
-  useEffect(() => {
-    const cachedThumbnail = thumbnailCache[workflowKey];
-
-    setThumbnailFileName(cachedThumbnail?.fileName ?? "");
-    setThumbnailDimensions(cachedThumbnail?.dimensions ?? null);
-    setThumbnailPreviewUrl(cachedThumbnail?.previewUrl ?? "");
-  }, [thumbnailCache, workflowKey]);
-
-  const updateThumbnailCache = (nextThumbnailState) => {
-    setThumbnailCache((prev) => ({
-      ...prev,
-      [workflowKey]: nextThumbnailState,
-    }));
-  };
-
   const handleAddSchedule = async (newSchedule) => {
     try {
-      await addSchedule(newSchedule);
+      const createdAt = new Date().toISOString();
+      const createdDoc = await addSchedule({
+        ...newSchedule,
+        createdAt,
+      });
+
+      setSchedules((prev) => {
+        if (prev.some((schedule) => schedule.id === createdDoc.id)) {
+          return prev;
+        }
+
+        return [
+          ...prev,
+          {
+            id: createdDoc.id,
+            ...newSchedule,
+            createdAt,
+          },
+        ];
+      });
     } catch (error) {
-      console.error("비행편 추가 오류:", error);
-      alert("비행편 추가에 실패했습니다. Firebase 설정을 확인해주세요.");
+      console.error("일정 추가 오류:", error);
+      alert("일정 추가에 실패했습니다. Firebase 설정을 확인해주세요.");
       throw error;
     }
   };
@@ -166,44 +133,9 @@ function App() {
     try {
       await deleteSchedule(id);
     } catch (error) {
-      console.error("비행편 삭제 오류:", error);
-      alert("비행편 삭제에 실패했습니다.");
+      console.error("일정 삭제 오류:", error);
+      alert("일정 삭제에 실패했습니다.");
     }
-  };
-
-  const handleDeleteMonth = async (monthOption) => {
-    const shouldDelete = window.confirm(
-      `${monthOption.label}의 일정 ${monthOption.schedules.length}개를 모두 삭제할까요?`,
-    );
-
-    if (!shouldDelete) {
-      return;
-    }
-
-    setDeletingMonthKey(monthOption.key);
-
-    try {
-      await Promise.all(
-        monthOption.schedules.map((schedule) => deleteSchedule(schedule.id)),
-      );
-
-      if (activeMonthKey === monthOption.key) {
-        setActiveMonthKey(null);
-        setActiveMonthLabel("");
-        setGeneratedWallpaperUrl("");
-        setCurrentScreen(SCREEN_KEYS.MONTH_LIST);
-      }
-    } catch (error) {
-      console.error("월별 스케줄 삭제 오류:", error);
-      alert("월별 스케줄 삭제에 실패했습니다.");
-    } finally {
-      setDeletingMonthKey("");
-    }
-  };
-
-  const handleBgColorChange = (nextColor) => {
-    setSelectedBgColor(nextColor);
-    setGeneratedWallpaperUrl("");
   };
 
   const handleEventTypeColorChange = (eventType, nextColor) => {
@@ -211,55 +143,15 @@ function App() {
       ...prev,
       [eventType]: nextColor,
     }));
-    setGeneratedWallpaperUrl("");
   };
 
-  const handleThumbnailSelect = (file) => {
-    if (!file) {
-      setGeneratedWallpaperUrl("");
-      updateThumbnailCache({
-        fileName: "",
-        dimensions: null,
-        previewUrl: "",
-      });
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const previewUrl = typeof reader.result === "string" ? reader.result : "";
-      const image = new Image();
-
-      image.onload = () => {
-        setGeneratedWallpaperUrl("");
-        updateThumbnailCache({
-          fileName: file.name,
-          dimensions: {
-            width: image.naturalWidth,
-            height: image.naturalHeight,
-          },
-          previewUrl,
-        });
-      };
-
-      image.onerror = () => {
-        setGeneratedWallpaperUrl("");
-        updateThumbnailCache({
-          fileName: file.name,
-          dimensions: null,
-          previewUrl,
-        });
-      };
-
-      image.src = previewUrl;
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  const handleGenerateWallpaper = async () => {
-    if (!thumbnailPreviewUrl) {
+  const handleGenerateWallpaper = async ({
+    targetSchedules,
+    referenceDate,
+    imageUrl,
+    requireThumbnail = false,
+  }) => {
+    if (requireThumbnail && !imageUrl) {
       alert("이미지를 먼저 선택해주세요.");
       return false;
     }
@@ -267,19 +159,15 @@ function App() {
     setIsGeneratingWallpaper(true);
 
     try {
-      const referenceDate = workflowSchedules[0]?.date
-        ? new Date(workflowSchedules[0].date)
-        : new Date();
-
-      const imageUrl = await generateWallpaperImage({
+      const wallpaperUrl = await generateWallpaperImage({
         backgroundColor: selectedBgColor,
         eventTypeColors,
-        thumbnailImageUrl: thumbnailPreviewUrl,
-        schedules: workflowSchedules,
+        thumbnailImageUrl: imageUrl ?? "",
+        schedules: targetSchedules,
         referenceDate,
       });
 
-      setGeneratedWallpaperUrl(imageUrl);
+      setGeneratedWallpaperUrl(wallpaperUrl);
       return true;
     } catch (error) {
       console.error("배경화면 생성 오류:", error);
@@ -291,65 +179,58 @@ function App() {
   };
 
   const handleSetupNext = async () => {
-    const generated = await handleGenerateWallpaper();
+    const referenceDate = workflow.workflowSchedules[0]?.date
+      ? new Date(workflow.workflowSchedules[0].date)
+      : new Date();
+
+    const generated = await handleGenerateWallpaper({
+      targetSchedules: workflow.workflowSchedules,
+      referenceDate,
+      imageUrl: thumbnailPreviewUrl,
+      requireThumbnail: true,
+    });
+
     if (generated) {
       setCurrentScreen(
-        activeMonthKey ? SCREEN_KEYS.SAVED_RESULT : SCREEN_KEYS.RESULT,
+        workflow.activeMonthKey ? SCREEN_KEYS.SAVED_RESULT : SCREEN_KEYS.RESULT,
       );
     }
   };
 
   const handleOpenSavedMonth = async (monthOption) => {
-    setActiveMonthKey(monthOption.key);
-    setActiveMonthLabel(monthOption.label);
-    setGeneratingMonthLabel(monthOption.label);
-    setIsGeneratingWallpaper(true);
+    workflow.setActiveMonthKey(monthOption.key);
+    workflow.setActiveMonthLabel(monthOption.label);
+    workflow.setGeneratingMonthLabel(monthOption.label);
 
-    try {
-      const cachedThumbnail = thumbnailCache[monthOption.key];
-      const imageUrl = await generateWallpaperImage({
-        backgroundColor: selectedBgColor,
-        eventTypeColors,
-        thumbnailImageUrl: cachedThumbnail?.previewUrl ?? "",
-        schedules: monthOption.schedules,
-        referenceDate: new Date(`${monthOption.key}-01`),
-      });
+    const cachedThumbnail = thumbnailCache[monthOption.key];
+    const generated = await handleGenerateWallpaper({
+      targetSchedules: monthOption.schedules,
+      referenceDate: new Date(`${monthOption.key}-01`),
+      imageUrl: cachedThumbnail?.previewUrl ?? "",
+      requireThumbnail: false,
+    });
 
-      setGeneratedWallpaperUrl(imageUrl);
+    if (generated) {
       setCurrentScreen(SCREEN_KEYS.SAVED_RESULT);
-    } catch (error) {
-      console.error("저장된 월별 이미지 생성 오류:", error);
-      alert("선택한 월의 이미지를 불러오지 못했습니다.");
-    } finally {
-      setIsGeneratingWallpaper(false);
-      setGeneratingMonthLabel("");
     }
+
+    workflow.setGeneratingMonthLabel("");
   };
 
   const handleStartNew = () => {
-    setActiveMonthKey(null);
-    setActiveMonthLabel("");
-    setGeneratingMonthLabel("");
-    setGeneratedWallpaperUrl("");
-    setSelectedBgColor(DEFAULT_BG_COLOR);
-    setEventTypeColors(DEFAULT_EVENT_TYPE_COLORS);
-    setThumbnailFileName("");
-    setThumbnailDimensions(null);
-    setThumbnailPreviewUrl("");
-    setThumbnailCache((prev) => ({
-      ...prev,
-      [DEFAULT_WORKFLOW_KEY]: {
-        fileName: "",
-        dimensions: null,
-        previewUrl: "",
-      },
-    }));
-    setNewWorkflowStartedAt(new Date().toISOString());
+    workflow.setActiveMonthKey(null);
+    workflow.setActiveMonthLabel("");
+    workflow.setGeneratingMonthLabel("");
+    workflow.setNewWorkflowStartedAt(new Date().toISOString());
+    resetWorkflowVisuals();
+    resetDefaultWorkflowThumbnail();
     setCurrentScreen(SCREEN_KEYS.ENTRY);
   };
 
   const handleDownloadWallpaper = () => {
-    if (!generatedWallpaperUrl) return;
+    if (!generatedWallpaperUrl) {
+      return;
+    }
 
     const link = document.createElement("a");
     link.href = generatedWallpaperUrl;
@@ -357,105 +238,6 @@ function App() {
     document.body.appendChild(link);
     link.click();
     link.remove();
-  };
-
-  const monthOptions = Array.from(
-    schedules.reduce((map, schedule) => {
-      const monthKey = getMonthKey(schedule.date);
-      if (!monthKey) return map;
-      if (!map.has(monthKey)) {
-        map.set(monthKey, []);
-      }
-      map.get(monthKey).push(schedule);
-      return map;
-    }, new Map()),
-  )
-    .map(([key, monthSchedules]) => ({
-      key,
-      label: formatMonthLabel(key),
-      schedules: [...monthSchedules].sort(compareByDateAsc),
-    }))
-    .sort((a, b) => b.key.localeCompare(a.key));
-
-  const shouldShowStepper =
-    currentScreen === SCREEN_KEYS.ENTRY ||
-    currentScreen === SCREEN_KEYS.SETUP ||
-    currentScreen === SCREEN_KEYS.RESULT;
-
-  const renderCurrentScreen = () => {
-    if (currentScreen === SCREEN_KEYS.MONTH_LIST) {
-      return (
-        <MonthlyScheduleListScreen
-          monthOptions={monthOptions}
-          isGenerating={isGeneratingWallpaper}
-          generatingLabel={generatingMonthLabel}
-          deletingMonthKey={deletingMonthKey}
-          onSelectMonth={handleOpenSavedMonth}
-          onDeleteMonth={handleDeleteMonth}
-          onStartNew={handleStartNew}
-        />
-      );
-    }
-
-    if (currentScreen === SCREEN_KEYS.ENTRY) {
-      return (
-        <ScheduleEntryScreen
-          schedules={workflowSchedules}
-          sortOption={sortOption}
-          onChangeSortOption={setSortOption}
-          onAddSchedule={handleAddSchedule}
-          onDeleteSchedule={handleDeleteSchedule}
-          onPrev={() => setCurrentScreen(SCREEN_KEYS.MONTH_LIST)}
-          onNext={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
-        />
-      );
-    }
-
-    if (currentScreen === SCREEN_KEYS.SETUP) {
-      return (
-        <WallpaperSetupScreen
-          selectedBgColor={selectedBgColor}
-          onBgColorChange={handleBgColorChange}
-          eventTypeColors={eventTypeColors}
-          onEventTypeColorChange={handleEventTypeColorChange}
-          thumbnailFileName={thumbnailFileName}
-          thumbnailDimensions={thumbnailDimensions}
-          thumbnailPreviewUrl={thumbnailPreviewUrl}
-          onThumbnailSelect={handleThumbnailSelect}
-          isGenerating={isGeneratingWallpaper}
-          onPrev={() => setCurrentScreen(SCREEN_KEYS.ENTRY)}
-          onNext={handleSetupNext}
-        />
-      );
-    }
-
-    if (currentScreen === SCREEN_KEYS.SAVED_RESULT) {
-      return (
-        <WallpaperResultScreen
-          generatedWallpaperUrl={generatedWallpaperUrl}
-          onPrev={() => setCurrentScreen(SCREEN_KEYS.MONTH_LIST)}
-          onGoStepOne={() => setCurrentScreen(SCREEN_KEYS.ENTRY)}
-          onGoStepTwo={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
-          onDownload={handleDownloadWallpaper}
-          title={activeMonthLabel || "저장된 스케줄 결과"}
-          subtitle="저장된 월별 일정으로 만든 이미지 목업입니다."
-          stepLabel=""
-          showPrevButton
-          showHomeButton={false}
-        />
-      );
-    }
-
-    return (
-      <WallpaperResultScreen
-        generatedWallpaperUrl={generatedWallpaperUrl}
-        onPrev={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
-        onGoHome={() => setCurrentScreen(SCREEN_KEYS.MONTH_LIST)}
-        onGoStepOne={() => setCurrentScreen(SCREEN_KEYS.ENTRY)}
-        onGoStepTwo={() => setCurrentScreen(SCREEN_KEYS.SETUP)}
-        onDownload={handleDownloadWallpaper}
-      />
-    );
   };
 
   return (
@@ -483,38 +265,56 @@ function App() {
             </div>
           ) : (
             <>
-              {shouldShowStepper ? (
+              {shouldShowStepper(currentScreen) ? (
                 <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between text-sm text-gray-500">
-                  <span>
-                    Step{" "}
-                    {
-                      {
-                        [SCREEN_KEYS.ENTRY]: 1,
-                        [SCREEN_KEYS.SETUP]: 2,
-                        [SCREEN_KEYS.RESULT]: 3,
-                      }[currentScreen]
-                    }{" "}
-                    / 3
-                  </span>
+                  <span>Step {STEP_MAP[currentScreen]} / 3</span>
                   <div className="flex items-center gap-2" aria-hidden="true">
-                    {[
-                      SCREEN_KEYS.ENTRY,
-                      SCREEN_KEYS.SETUP,
-                      SCREEN_KEYS.RESULT,
-                    ].map((step) => (
-                      <span
-                        key={step}
-                        className={`h-2.5 w-2.5 rounded-full transition ${
-                          step === currentScreen
-                            ? "bg-[#1565C0]"
-                            : "bg-gray-300"
-                        }`}
-                      />
-                    ))}
+                    {[SCREEN_KEYS.ENTRY, SCREEN_KEYS.SETUP, SCREEN_KEYS.RESULT].map(
+                      (step) => (
+                        <span
+                          key={step}
+                          className={`h-2.5 w-2.5 rounded-full transition ${
+                            step === currentScreen
+                              ? "bg-[#1565C0]"
+                              : "bg-gray-300"
+                          }`}
+                        />
+                      ),
+                    )}
                   </div>
                 </div>
               ) : null}
-              {renderCurrentScreen()}
+
+              <AppScreenContent
+                currentScreen={currentScreen}
+                screenKeys={SCREEN_KEYS}
+                monthOptions={workflow.monthOptions}
+                workflowSchedules={workflow.workflowSchedules}
+                sortOption={sortOption}
+                onSortOptionChange={setSortOption}
+                onScreenChange={setCurrentScreen}
+                onAddSchedule={handleAddSchedule}
+                onDeleteSchedule={handleDeleteSchedule}
+                onSelectMonth={handleOpenSavedMonth}
+                onDeleteMonth={workflow.handleDeleteMonth}
+                onStartNew={handleStartNew}
+                isGenerating={isGeneratingWallpaper}
+                generatingMonthLabel={workflow.generatingMonthLabel}
+                deletingMonthKey={workflow.deletingMonthKey}
+                selectedBgColor={selectedBgColor}
+                onBgColorChange={setSelectedBgColor}
+                eventTypeColors={eventTypeColors}
+                onEventTypeColorChange={handleEventTypeColorChange}
+                thumbnailFileName={thumbnailFileName}
+                thumbnailDimensions={thumbnailDimensions}
+                thumbnailPreviewUrl={thumbnailPreviewUrl}
+                onThumbnailSelect={handleThumbnailSelect}
+                onGenerateNext={handleSetupNext}
+                onGoToMonthList={() => setCurrentScreen(SCREEN_KEYS.MONTH_LIST)}
+                generatedWallpaperUrl={generatedWallpaperUrl}
+                onDownload={handleDownloadWallpaper}
+                activeMonthLabel={workflow.activeMonthLabel}
+              />
             </>
           )}
         </div>
