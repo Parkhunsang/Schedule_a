@@ -102,18 +102,20 @@ function App() {
                 <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between text-sm text-gray-500">
                   <span>Step {STEP_MAP[currentScreen]} / 3</span>
                   <div className="flex items-center gap-2" aria-hidden="true">
-                    {[SCREEN_KEYS.ENTRY, SCREEN_KEYS.SETUP, SCREEN_KEYS.RESULT].map(
-                      (step) => (
-                        <span
-                          key={step}
-                          className={`h-2.5 w-2.5 rounded-full transition ${
-                            step === currentScreen
-                              ? "bg-[#1565C0]"
-                              : "bg-gray-300"
-                          }`}
-                        />
-                      ),
-                    )}
+                    {[
+                      SCREEN_KEYS.ENTRY,
+                      SCREEN_KEYS.SETUP,
+                      SCREEN_KEYS.RESULT,
+                    ].map((step) => (
+                      <span
+                        key={step}
+                        className={`h-2.5 w-2.5 rounded-full transition ${
+                          step === currentScreen
+                            ? "bg-[#1565C0]"
+                            : "bg-gray-300"
+                        }`}
+                      />
+                    ))}
                   </div>
                 </div>
               ) : null}
@@ -157,7 +159,7 @@ function App() {
       <footer className="mt-auto w-full border-t border-gray-200 bg-white">
         <div className="mx-auto w-full max-w-3xl px-3 py-4 text-center sm:py-6">
           <p className="text-xs opacity-75 sm:text-sm">
-            2026 Schedule App - For Han Bi Yun
+            Schedule App - For Han Bi Yun
           </p>
         </div>
       </footer>
