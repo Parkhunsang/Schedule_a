@@ -51,14 +51,46 @@
 
 ## Tech Stack
 
-- `React 19`
-- `Vite`
-- `Firebase / Firestore`
-- `Zustand`
-- `i18next`
-- `Tailwind CSS`
-- `xlsx`
-- `HTML Canvas API`
+| Category | Stack |
+| --- | --- |
+| Frontend | `React 19`, `React DOM` |
+| Build Tool | `Vite` |
+| Styling | `Tailwind CSS`, `PostCSS`, `Autoprefixer` |
+| State Management | `Zustand` |
+| Backend / Database | `Firebase`, `Cloud Firestore` |
+| Internationalization | `i18next`, `react-i18next` |
+| Export | `xlsx` |
+| Image Generation | `HTML Canvas API` |
+| Deployment | `Cloudflare Pages`, `Firebase Hosting` config |
+
+## Directory Structure
+
+```text
+airplaneSchedule/
+├── .cline/                     # MCP 설정 파일
+├── src/                        # 애플리케이션 소스 코드
+│   ├── app/                    # 화면 흐름, 전역 상태, i18n, 공통 유틸
+│   │   ├── components/         # 앱 공통 화면 컴포넌트
+│   │   ├── hooks/              # 워크플로우 및 데이터 처리 훅
+│   │   ├── i18n/               # 다국어 설정 및 locale 리소스
+│   │   ├── store/              # Zustand 전역 스토어
+│   │   └── utils/              # 화면 전환 및 일정 뷰 유틸
+│   ├── assets/                 # 정적 이미지 리소스
+│   ├── features/               # 도메인별 기능 모듈
+│   │   ├── schedule/           # 일정 입력, 목록, 저장, Excel 내보내기
+│   │   └── wallpaper/          # 월페이퍼 설정, 생성, 다운로드
+│   ├── services/               # 외부 API / 서비스 연동 로직
+│   ├── App.jsx                 # 최상위 앱 컴포넌트
+│   ├── firebaseConfig.js       # Firebase 초기화 및 환경변수 검증
+│   ├── index.css               # Tailwind 및 글로벌 스타일
+│   └── main.jsx                # React 앱 진입점
+├── firebase.json               # Firebase Hosting 설정
+├── index.html                  # Vite HTML 엔트리
+├── package.json                # npm 스크립트 및 의존성
+├── postcss.config.js           # PostCSS 설정
+├── tailwind.config.js          # Tailwind CSS 설정
+└── vite.config.js              # Vite 설정
+```
 
 ## Architecture Highlights
 
