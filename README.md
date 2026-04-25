@@ -1,53 +1,52 @@
 # HAN BI SCHEDULE
 
-월별 비행 스케줄을 입력하고, 커스텀 월페이퍼로 가공해 다운로드할 수 있는 React 기반 웹 애플리케이션입니다.  
-반복적으로 확인해야 하는 비행 일정을 단순 표 형태로 끝내지 않고, 실제로 휴대폰 배경화면으로 바로 사용할 수 있는 결과물까지 연결하는 흐름에 초점을 맞췄습니다.
+HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 그 결과를 배경화면 이미지로 생성해 저장할 수 있는 React 기반 웹앱입니다.
 
 ## Overview
 
-이 프로젝트는 일정 관리와 시각적 결과물을 하나의 흐름으로 묶는 개인 맞춤형 일정 생성 도구입니다.
-
-- 월별 비행 스케줄 입력 및 관리
+- 월별 비행 일정 입력 및 관리
 - Firebase Firestore 기반 일정 저장
-- 배경색, 이벤트 색상, 썸네일 이미지 커스터마이징
-- 캔버스 기반 월페이퍼 생성 및 다운로드
+- 배경 색상, 이벤트 색상, 썸네일 이미지 커스터마이징
+- Canvas 기반 배경화면 생성 및 다운로드
 - Excel 내보내기 지원
 - 한국어 / 영어 전환 지원
 
-## Why This Project
+## Roles
 
-기존 일정 앱은 데이터를 저장하고 조회하는 데는 강하지만, 사용자가 매일 가장 자주 보는 화면인 휴대폰 배경화면까지 연결되지는 않는 경우가 많습니다.  
-이 프로젝트는 일정 데이터를 단순 보관하는 수준을 넘어서, 사용자가 실제로 활용할 수 있는 비주얼 결과물로 변환하는 경험을 목표로 만들었습니다.
+- Cloudflare: 정적 프론트엔드 배포
+- Firebase Firestore: 일정 데이터 저장소
+
+즉, 현재 서비스 구조는 "배포는 Cloudflare, 데이터는 Firebase"입니다.
 
 ## Core Features
 
 ### 1. Monthly schedule workflow
 
-- 월별 스케줄을 입력하고 저장할 수 있습니다.
-- 등록된 일정은 정렬, 삭제, 재열람이 가능합니다.
-- 저장된 월을 다시 열어 이전 결과를 이어서 확인할 수 있습니다.
+- 월별 비행 일정을 입력하고 저장할 수 있습니다.
+- 저장된 일정은 정렬, 삭제, 재조회가 가능합니다.
+- 저장된 월을 다시 열어 이어서 작업할 수 있습니다.
 
 ### 2. Wallpaper customization
 
-- 배경색 팔레트 선택
+- 배경 색상 선택
 - 이벤트 타입별 색상 조정
 - 사용자 이미지 업로드 및 미리보기
-- 생성 전 설정값 확인
+- 생성 전 설정 검토
 
 ### 3. Canvas-based wallpaper generation
 
-- 일정 데이터를 기반으로 캘린더형 월페이퍼를 생성합니다.
-- 이미지와 일정 카드가 조합된 결과물을 PNG로 다운로드할 수 있습니다.
+- 입력된 일정 데이터를 바탕으로 배경화면 이미지를 생성합니다.
+- 결과 이미지를 PNG로 다운로드할 수 있습니다.
 
 ### 4. Data persistence
 
-- Firebase Firestore를 이용해 일정 데이터를 저장하고 구독합니다.
-- 배포 환경에서도 환경변수만 올바르게 설정하면 동일하게 동작합니다.
+- Firebase Firestore를 사용해 일정 데이터를 저장하고 불러옵니다.
+- 배포 환경에서는 Cloudflare에 설정된 `VITE_FIREBASE_*` 환경변수를 통해 Firebase에 연결합니다.
 
 ### 5. Export and accessibility
 
 - 일정 데이터를 Excel 파일로 내보낼 수 있습니다.
-- 한/영 언어 전환을 지원합니다.
+- 한국어와 영어 인터페이스를 지원합니다.
 
 ## Tech Stack
 
@@ -61,57 +60,24 @@
 | Internationalization | `i18next`, `react-i18next` |
 | Export | `xlsx` |
 | Image Generation | `HTML Canvas API` |
-| Deployment | `Cloudflare Pages`, `Firebase Hosting` config |
+| Deployment | `Cloudflare` |
 
 ## Directory Structure
 
 ```text
 airplaneSchedule/
-├── .cline/                     # MCP 설정 파일
-├── src/                        # 애플리케이션 소스 코드
-│   ├── app/                    # 화면 흐름, 전역 상태, i18n, 공통 유틸
-│   │   ├── components/         # 앱 공통 화면 컴포넌트
-│   │   ├── hooks/              # 워크플로우 및 데이터 처리 훅
-│   │   ├── i18n/               # 다국어 설정 및 locale 리소스
-│   │   ├── store/              # Zustand 전역 스토어
-│   │   └── utils/              # 화면 전환 및 일정 뷰 유틸
-│   ├── assets/                 # 정적 이미지 리소스
-│   ├── features/               # 도메인별 기능 모듈
-│   │   ├── schedule/           # 일정 입력, 목록, 저장, Excel 내보내기
-│   │   └── wallpaper/          # 월페이퍼 설정, 생성, 다운로드
-│   ├── services/               # 외부 API / 서비스 연동 로직
-│   ├── App.jsx                 # 최상위 앱 컴포넌트
-│   ├── firebaseConfig.js       # Firebase 초기화 및 환경변수 검증
-│   ├── index.css               # Tailwind 및 글로벌 스타일
-│   └── main.jsx                # React 앱 진입점
-├── firebase.json               # Firebase Hosting 설정
-├── index.html                  # Vite HTML 엔트리
-├── package.json                # npm 스크립트 및 의존성
-├── postcss.config.js           # PostCSS 설정
-├── tailwind.config.js          # Tailwind CSS 설정
-└── vite.config.js              # Vite 설정
+├─ public/                    # favicon, og-image, sitemap, robots 등 정적 SEO 자산
+├─ src/
+│  ├─ app/                    # 공통 UI, i18n, 상태, 유틸
+│  ├─ assets/                 # 정적 이미지 자산
+│  ├─ features/               # 기능별 모듈
+│  ├─ App.jsx                 # 최상위 앱 컴포넌트
+│  └─ firebaseConfig.js       # Firebase 초기화 및 환경변수 검증
+├─ index.html                 # 문서 메타, favicon, OG 설정
+├─ firebase.json              # 예전 Firebase Hosting 설정 파일
+├─ .firebaserc                # 예전 Firebase 프로젝트 연결 정보
+└─ vite.config.js             # Vite 설정
 ```
-
-## Architecture Highlights
-
-이 프로젝트는 기능 중심 구조를 기준으로 분리되어 있습니다.
-
-- `src/app`
-  화면 전환, 전역 상태, i18n, 공통 로직
-- `src/features/schedule`
-  일정 입력, 목록, 저장/삭제, Excel 내보내기
-- `src/features/wallpaper`
-  월페이퍼 설정, 썸네일 처리, 캔버스 렌더링
-- `src/services`
-  외부 서비스 연동 로직
-
-핵심 화면 흐름은 다음과 같습니다.
-
-1. 저장된 월 선택 또는 새 일정 시작
-2. 일정 입력 및 정렬
-3. 배경/이벤트 색상/이미지 설정
-4. 월페이퍼 생성
-5. 결과 다운로드
 
 ## Local Development
 
@@ -140,7 +106,7 @@ VITE_FIREBASE_APP_ID=your_value
 npm run dev
 ```
 
-개발 서버 기본 포트는 `3000`입니다.
+기본 개발 서버 포트는 `3000`입니다.
 
 ## Build
 
@@ -148,16 +114,16 @@ npm run dev
 npm run build
 ```
 
-빌드 결과물은 `dist/` 폴더에 생성됩니다.
+빌드 결과물은 `dist/`에 생성됩니다.
 
 ## Deployment
 
-현재 프로젝트는 `Cloudflare Pages` 기준으로 배포할 수 있습니다.
+현재 배포 기준은 Cloudflare입니다.
 
 - Build command: `npm run build`
 - Output directory: `dist`
 
-배포 환경에서도 아래 환경변수를 반드시 등록해야 합니다.
+Cloudflare 프로젝트 설정에서 아래 환경변수를 등록해야 Firestore가 정상 동작합니다.
 
 - `VITE_FIREBASE_API_KEY`
 - `VITE_FIREBASE_AUTH_DOMAIN`
@@ -166,26 +132,25 @@ npm run build
 - `VITE_FIREBASE_MESSAGING_SENDER_ID`
 - `VITE_FIREBASE_APP_ID`
 
-Cloudflare Pages 경로:
+Cloudflare 설정 경로:
 
 `Settings > Variables and Secrets`
 
-## What I Focused On
+## Firebase Notes
 
-이 프로젝트에서 특히 신경 쓴 부분은 아래와 같습니다.
+- `firebase.json`과 `.firebaserc`는 예전 Firebase Hosting 설정 흔적입니다.
+- 현재 앱의 실제 배포는 Cloudflare에서 이루어집니다.
+- 다만 Firebase 프로젝트 자체는 Firestore 데이터 저장 때문에 계속 필요합니다.
 
-- 단순 CRUD가 아니라 "입력 -> 가공 -> 결과물 생성"까지 이어지는 사용자 흐름 설계
-- 데이터 관리와 시각 생성 로직의 역할 분리
-- 로컬 개발 환경과 배포 환경에서 동일하게 동작하도록 환경변수 구조 정리
-- 실제 사용성을 고려한 결과물 중심 UI 구성
+## SEO Assets
 
-## Future Improvements
+현재 `public/`에는 아래 SEO 관련 파일이 포함됩니다.
 
-- README에 실제 화면 스크린샷 추가
-- 생성 결과 예시 이미지 추가
-- 일정 수정 기능 고도화
-- 생성 템플릿 다양화
-- 모바일 사용성 추가 개선
+- `favicon.ico`
+- `og-image.png`
+- `robots.txt`
+- `sitemap.xml`
+- `site.webmanifest`
 
 ## License
 
