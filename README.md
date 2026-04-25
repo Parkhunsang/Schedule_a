@@ -1,6 +1,6 @@
 # HAN BI SCHEDULE
 
-HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 그 결과를 배경화면 이미지로 생성해 저장할 수 있는 React 기반 웹앱입니다.
+HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 결과를 배경화면 이미지로 생성할 수 있는 React 기반 웹앱입니다.
 
 ## Overview
 
@@ -16,7 +16,7 @@ HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 그 결과를 배경화
 - Cloudflare: 정적 프론트엔드 배포
 - Firebase Firestore: 일정 데이터 저장소
 
-즉, 현재 서비스 구조는 "배포는 Cloudflare, 데이터는 Firebase"입니다.
+즉, 현재 구조는 "배포는 Cloudflare, 데이터는 Firebase"입니다.
 
 ## Core Features
 
@@ -41,7 +41,7 @@ HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 그 결과를 배경화
 ### 4. Data persistence
 
 - Firebase Firestore를 사용해 일정 데이터를 저장하고 불러옵니다.
-- 배포 환경에서는 Cloudflare에 설정된 `VITE_FIREBASE_*` 환경변수를 통해 Firebase에 연결합니다.
+- 배포 환경에서는 Cloudflare에 설정된 `VITE_FIREBASE_*` 환경변수로 Firebase에 연결합니다.
 
 ### 5. Export and accessibility
 
@@ -66,16 +66,17 @@ HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 그 결과를 배경화
 
 ```text
 airplaneSchedule/
-├─ public/                    # favicon, og-image, sitemap, robots 등 정적 SEO 자산
+├─ public/                    # og-image, sitemap, robots 등 정적 SEO 자산
 ├─ src/
 │  ├─ app/                    # 공통 UI, i18n, 상태, 유틸
 │  ├─ assets/                 # 정적 이미지 자산
 │  ├─ features/               # 기능별 모듈
 │  ├─ App.jsx                 # 최상위 앱 컴포넌트
 │  └─ firebaseConfig.js       # Firebase 초기화 및 환경변수 검증
-├─ index.html                 # 문서 메타, favicon, OG 설정
+├─ index.html                 # 문서 메타, inline SVG favicon, OG 설정
 ├─ firebase.json              # 예전 Firebase Hosting 설정 파일
 ├─ .firebaserc                # 예전 Firebase 프로젝트 연결 정보
+├─ wrangler.toml              # Cloudflare Workers 배포 설정
 └─ vite.config.js             # Vite 설정
 ```
 
@@ -118,10 +119,11 @@ npm run build
 
 ## Deployment
 
-현재 배포 기준은 Cloudflare입니다.
+현재 배포 기준은 Cloudflare Workers입니다.
 
 - Build command: `npm run build`
-- Output directory: `dist`
+- Deploy command: `npx wrangler deploy`
+- Assets directory: `dist`
 
 Cloudflare 프로젝트 설정에서 아래 환경변수를 등록해야 Firestore가 정상 동작합니다.
 
@@ -140,17 +142,18 @@ Cloudflare 설정 경로:
 
 - `firebase.json`과 `.firebaserc`는 예전 Firebase Hosting 설정 흔적입니다.
 - 현재 앱의 실제 배포는 Cloudflare에서 이루어집니다.
-- 다만 Firebase 프로젝트 자체는 Firestore 데이터 저장 때문에 계속 필요합니다.
+- Firebase 프로젝트 자체는 Firestore 데이터 저장 때문에 계속 필요합니다.
 
 ## SEO Assets
 
 현재 `public/`에는 아래 SEO 관련 파일이 포함됩니다.
 
-- `favicon.ico`
 - `og-image.png`
 - `robots.txt`
 - `sitemap.xml`
 - `site.webmanifest`
+
+파비콘은 `index.html` 안의 inline SVG를 사용합니다.
 
 ## License
 
