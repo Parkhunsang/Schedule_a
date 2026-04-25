@@ -41,10 +41,10 @@ export const syncDocumentSeo = (language = "ko") => {
   upsertMeta('meta[property="og:description"]', "content", description);
   upsertMeta('meta[property="og:locale"]', "content", ogLocale);
   upsertMeta('meta[property="og:url"]', "content", `${SITE_URL}/`);
-  upsertMeta('meta[property="og:image"]', "content", `${SITE_URL}/og-image.svg`);
+  upsertMeta('meta[property="og:image"]', "content", `${SITE_URL}/og-image.png`);
   upsertMeta('meta[name="twitter:title"]', "content", title);
   upsertMeta('meta[name="twitter:description"]', "content", description);
-  upsertMeta('meta[name="twitter:image"]', "content", `${SITE_URL}/og-image.svg`);
+  upsertMeta('meta[name="twitter:image"]', "content", `${SITE_URL}/og-image.png`);
 
   const canonicalLink = document.head.querySelector('link[rel="canonical"]');
   const currentUrl =
