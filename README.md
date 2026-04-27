@@ -50,17 +50,17 @@ HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 결과를 배경화면 
 
 ## Tech Stack
 
-| Category | Stack |
-| --- | --- |
-| Frontend | `React 19`, `React DOM` |
-| Build Tool | `Vite` |
-| Styling | `Tailwind CSS`, `PostCSS`, `Autoprefixer` |
-| State Management | `Zustand` |
-| Backend / Database | `Firebase`, `Cloud Firestore` |
-| Internationalization | `i18next`, `react-i18next` |
-| Export | `xlsx` |
-| Image Generation | `HTML Canvas API` |
-| Deployment | `Cloudflare` |
+| Category             | Stack                                     |
+| -------------------- | ----------------------------------------- |
+| Frontend             | `React 19`, `React DOM`                   |
+| Build Tool           | `Vite`                                    |
+| Styling              | `Tailwind CSS`, `PostCSS`, `Autoprefixer` |
+| State Management     | `Zustand`                                 |
+| Backend / Database   | `Firebase`, `Cloud Firestore`             |
+| Internationalization | `i18next`, `react-i18next`                |
+| Export               | `xlsx`                                    |
+| Image Generation     | `HTML Canvas API`                         |
+| Deployment           | `Cloudflare`                              |
 
 ## Directory Structure
 
@@ -154,10 +154,6 @@ Cloudflare 설정 경로:
 - `site.webmanifest`
 
 파비콘은 `index.html` 안의 inline SVG를 사용합니다.
-
-## License
-
-ISC
 
 ## Firestore Rules
 
