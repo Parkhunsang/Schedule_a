@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ScheduleForm from "../ScheduleForm";
 import ScheduleTable from "../ScheduleTable";
@@ -8,17 +8,24 @@ function ScheduleEntryScreen({
   sortOption,
   onChangeSortOption,
   onAddSchedule,
+  onUpdateSchedule,
   onDeleteSchedule,
   onExportSchedules,
   onPrev,
   onNext,
 }) {
   const { t } = useTranslation();
+  const [editingSchedule, setEditingSchedule] = useState(null);
 
   return (
     <section className="min-w-full flex-none">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <ScheduleForm onAddSchedule={onAddSchedule} />
+        <ScheduleForm
+          onAddSchedule={onAddSchedule}
+          onUpdateSchedule={onUpdateSchedule}
+          editingSchedule={editingSchedule}
+          onCancelEdit={() => setEditingSchedule(null)}
+        />
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
             <span>{t("schedule.sort")}</span>
@@ -43,7 +50,11 @@ function ScheduleEntryScreen({
             {t("schedule.exportExcel")}
           </button>
         </div>
-        <ScheduleTable schedules={schedules} onDelete={onDeleteSchedule} />
+        <ScheduleTable
+          schedules={schedules}
+          onDelete={onDeleteSchedule}
+          onEdit={setEditingSchedule}
+        />
         <div className="flex flex-col gap-3 pb-6 sm:flex-row sm:justify-between">
           <button
             type="button"

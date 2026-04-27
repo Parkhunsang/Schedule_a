@@ -7,6 +7,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 
 const getSchedulesCollection = (userId) => {
@@ -57,6 +58,19 @@ export const addSchedule = async (userId, newSchedule) => {
     ...newSchedule,
     createdAt,
   });
+};
+
+export const updateSchedule = async (userId, id, updates) => {
+  if (!db) {
+    throw new Error(firebaseConfigError);
+  }
+
+  if (!userId) {
+    throw new Error("A signed-in user is required.");
+  }
+
+  const scheduleDoc = doc(db, "users", userId, "schedules", id);
+  await updateDoc(scheduleDoc, updates);
 };
 
 export const deleteSchedule = async (userId, id) => {

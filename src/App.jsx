@@ -10,6 +10,7 @@ import { useMonthlyScheduleWorkflow } from "./app/hooks/useMonthlyScheduleWorkfl
 import { useSchedules } from "./app/hooks/useSchedules";
 import { useThumbnailWorkflow } from "./app/hooks/useThumbnailWorkflow";
 import { useWorkflowStore } from "./app/store/useWorkflowStore";
+import { useGoogleCalendar } from "./features/calendar/hooks/useGoogleCalendar";
 import { deleteSchedule } from "./features/schedule/services/scheduleService";
 import { firebaseConfigError } from "./firebaseConfig";
 import { useTranslation } from "react-i18next";
@@ -55,6 +56,28 @@ function App() {
     screenKeys: SCREEN_KEYS,
   });
 
+  const {
+    isCalendarAvailable,
+    isCalendarReady,
+    isCalendarConnected,
+    isConnectingCalendar,
+    isLoadingCalendarEvents,
+    calendarConnectionError,
+    currentMonthDate,
+    calendarEvents,
+    connectCalendar,
+    disconnectCalendar,
+    syncScheduleToCalendar,
+    deleteScheduleFromCalendar,
+    updateScheduleInCalendar,
+    goToPreviousMonth,
+    goToNextMonth,
+    goToCurrentMonth,
+  } = useGoogleCalendar({
+    user,
+    language,
+  });
+
   const workflowKey = workflow.activeMonthKey ?? DEFAULT_WORKFLOW_KEY;
 
   const {
@@ -76,6 +99,7 @@ function App() {
     generatedWallpaperUrl,
     handleAddSchedule,
     handleDeleteSchedule,
+    handleUpdateSchedule,
     handleEventTypeColorChange,
     handleSetupNext,
     handleOpenSavedMonth,
@@ -89,6 +113,9 @@ function App() {
     thumbnailCache,
     thumbnailPreviewUrl,
     resetDefaultWorkflowThumbnail,
+    syncScheduleToCalendar,
+    deleteScheduleFromCalendar,
+    updateScheduleInCalendar,
   });
 
   const handleChangeLanguage = (nextLanguage) => {
@@ -218,11 +245,28 @@ function App() {
                 currentScreen={currentScreen}
                 screenKeys={SCREEN_KEYS}
                 monthOptions={workflow.monthOptions}
+                allSchedules={schedules}
+                calendarProps={{
+                  isCalendarAvailable,
+                  isCalendarReady,
+                  isCalendarConnected,
+                  isConnectingCalendar,
+                  isLoadingCalendarEvents,
+                  calendarConnectionError,
+                  currentMonthDate,
+                  calendarEvents,
+                  connectCalendar,
+                  disconnectCalendar,
+                  goToPreviousMonth,
+                  goToNextMonth,
+                  goToCurrentMonth,
+                }}
                 workflowSchedules={workflow.workflowSchedules}
                 sortOption={sortOption}
                 onSortOptionChange={setSortOption}
                 onScreenChange={setCurrentScreen}
                 onAddSchedule={handleAddSchedule}
+                onUpdateSchedule={handleUpdateSchedule}
                 onDeleteSchedule={handleDeleteSchedule}
                 onExportSchedules={handleExportSchedulesToExcel}
                 onSelectMonth={handleOpenSavedMonth}

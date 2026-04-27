@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 function MonthlyScheduleListScreen({
   monthOptions,
+  calendarWidget,
   isGenerating,
   generatingLabel,
   deletingMonthKey,
@@ -15,6 +16,8 @@ function MonthlyScheduleListScreen({
   return (
     <section className="min-w-full flex-none">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+        {calendarWidget}
+
         <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="mb-5">
             <h2 className="text-2xl font-bold text-gray-900">

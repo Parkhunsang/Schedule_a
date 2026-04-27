@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   addSchedule,
   deleteSchedule,
+  updateSchedule,
 } from "../../features/schedule/services/scheduleService";
 import { generateWallpaperImage } from "../../features/wallpaper/utils/wallpaperGenerator";
 import { useWorkflowStore } from "../store/useWorkflowStore";
@@ -15,6 +16,9 @@ export const useAppWorkflowActions = ({
   thumbnailCache,
   thumbnailPreviewUrl,
   resetDefaultWorkflowThumbnail,
+  syncScheduleToCalendar,
+  deleteScheduleFromCalendar,
+  updateScheduleInCalendar,
 }) => {
   const { t } = useTranslation();
   const [isGeneratingWallpaper, setIsGeneratingWallpaper] = useState(false);
@@ -37,21 +41,37 @@ export const useAppWorkflowActions = ({
         ...newSchedule,
         createdAt,
       });
+      const createdSchedule = {
+        id: createdDoc.id,
+        ...newSchedule,
+        createdAt,
+      };
 
       setSchedules((prev) => {
         if (prev.some((schedule) => schedule.id === createdDoc.id)) {
           return prev;
         }
 
-        return [
-          ...prev,
-          {
-            id: createdDoc.id,
-            ...newSchedule,
-            createdAt,
-          },
-        ];
+        return [...prev, createdSchedule];
       });
+
+      if (syncScheduleToCalendar) {
+        try {
+          const createdEvent = await syncScheduleToCalendar({
+            schedule: createdSchedule,
+            appScheduleId: createdDoc.id,
+          });
+
+          if (createdEvent?.id) {
+            await updateSchedule(userId, createdDoc.id, {
+              googleCalendarEventId: createdEvent.id,
+              googleCalendarSyncedAt: new Date().toISOString(),
+            });
+          }
+        } catch (calendarError) {
+          console.error("Google Calendar sync error:", calendarError);
+        }
+      }
     } catch (error) {
       console.error("Schedule add error:", error);
       alert(t("schedule.addFailed"));
@@ -59,12 +79,77 @@ export const useAppWorkflowActions = ({
     }
   };
 
-  const handleDeleteSchedule = async (id) => {
+  const handleDeleteSchedule = async (scheduleOrId) => {
+    const schedule =
+      typeof scheduleOrId === "object" && scheduleOrId !== null
+        ? scheduleOrId
+        : null;
+    const scheduleId = schedule?.id ?? scheduleOrId;
+
     try {
-      await deleteSchedule(userId, id);
+      if (schedule?.googleCalendarEventId && deleteScheduleFromCalendar) {
+        try {
+          await deleteScheduleFromCalendar(schedule.googleCalendarEventId);
+        } catch (calendarError) {
+          console.error("Google Calendar delete error:", calendarError);
+        }
+      }
+
+      await deleteSchedule(userId, scheduleId);
     } catch (error) {
       console.error("Schedule delete error:", error);
       alert(t("schedule.deleteFailed"));
+    }
+  };
+
+  const handleUpdateSchedule = async (updatedSchedule) => {
+    try {
+      const { id, ...scheduleUpdates } = updatedSchedule;
+
+      await updateSchedule(userId, id, scheduleUpdates);
+
+      setSchedules((prev) =>
+        prev.map((schedule) =>
+          schedule.id === id
+            ? {
+                ...schedule,
+                ...scheduleUpdates,
+              }
+            : schedule,
+        ),
+      );
+
+      if (updatedSchedule.googleCalendarEventId && updateScheduleInCalendar) {
+        try {
+          await updateScheduleInCalendar({
+            schedule: updatedSchedule,
+            googleCalendarEventId: updatedSchedule.googleCalendarEventId,
+            appScheduleId: updatedSchedule.id,
+          });
+        } catch (calendarError) {
+          console.error("Google Calendar update error:", calendarError);
+        }
+      } else if (syncScheduleToCalendar) {
+        try {
+          const createdEvent = await syncScheduleToCalendar({
+            schedule: updatedSchedule,
+            appScheduleId: updatedSchedule.id,
+          });
+
+          if (createdEvent?.id) {
+            await updateSchedule(userId, updatedSchedule.id, {
+              googleCalendarEventId: createdEvent.id,
+              googleCalendarSyncedAt: new Date().toISOString(),
+            });
+          }
+        } catch (calendarError) {
+          console.error("Google Calendar create-after-update error:", calendarError);
+        }
+      }
+    } catch (error) {
+      console.error("Schedule update error:", error);
+      alert(t("schedule.addFailed"));
+      throw error;
     }
   };
 
@@ -210,6 +295,7 @@ export const useAppWorkflowActions = ({
     generatedWallpaperUrl,
     handleAddSchedule,
     handleDeleteSchedule,
+    handleUpdateSchedule,
     handleEventTypeColorChange,
     handleSetupNext,
     handleOpenSavedMonth,

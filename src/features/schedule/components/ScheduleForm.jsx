@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DESTINATIONS from "../constants/destinations";
 import { getEventTypeOptions } from "../../wallpaper/constants/eventTypes";
@@ -13,23 +13,45 @@ const DESTINATION_OPTIONS = Object.entries(DESTINATIONS).flatMap(
     })),
 );
 
-function ScheduleForm({ onAddSchedule }) {
+const createInitialFormData = (schedule = null) => ({
+  date: schedule?.date ?? "",
+  eventType: schedule?.eventType ?? "flight",
+  isLayover: schedule?.isLayover ?? false,
+  departureTime:
+    schedule?.departureTime && schedule.departureTime !== "-"
+      ? schedule.departureTime
+      : "",
+  arrivalTime:
+    schedule?.arrivalTime && schedule.arrivalTime !== "-"
+      ? schedule.arrivalTime
+      : "",
+  hongKongDepartureDate: schedule?.hongKongDepartureDate ?? "",
+  hongKongDepartureTime:
+    schedule?.hongKongDepartureTime && schedule.hongKongDepartureTime !== "-"
+      ? schedule.hongKongDepartureTime
+      : "",
+  hongKongArrivalTime:
+    schedule?.hongKongArrivalTime && schedule.hongKongArrivalTime !== "-"
+      ? schedule.hongKongArrivalTime
+      : "",
+  aircraft:
+    schedule?.eventType === "flight" ? schedule?.aircraft ?? "" : "",
+  destination:
+    schedule?.eventType === "flight" ? schedule?.destination ?? "" : "",
+});
+
+function ScheduleForm({
+  onAddSchedule,
+  onUpdateSchedule,
+  editingSchedule,
+  onCancelEdit,
+}) {
   const { t } = useTranslation();
   const eventTypeOptions = getEventTypeOptions(t);
-  const [formData, setFormData] = useState({
-    date: "",
-    eventType: "flight",
-    isLayover: false,
-    departureTime: "",
-    arrivalTime: "",
-    hongKongDepartureDate: "",
-    hongKongDepartureTime: "",
-    hongKongArrivalTime: "",
-    aircraft: "",
-    destination: "",
-  });
+  const [formData, setFormData] = useState(createInitialFormData());
   const [destinationSearch, setDestinationSearch] = useState("");
   const [isDestinationOpen, setIsDestinationOpen] = useState(false);
+  const isEditing = Boolean(editingSchedule?.id);
 
   const requiresTimeRange =
     formData.eventType === "flight" ||
@@ -39,6 +61,16 @@ function ScheduleForm({ onAddSchedule }) {
   const filteredDestinations = DESTINATION_OPTIONS.filter((option) =>
     option.searchText.includes(destinationSearch.trim().toLowerCase()),
   ).slice(0, 12);
+
+  useEffect(() => {
+    setFormData(createInitialFormData(editingSchedule));
+    setDestinationSearch(
+      editingSchedule?.eventType === "flight"
+        ? editingSchedule.destination ?? ""
+        : "",
+    );
+    setIsDestinationOpen(false);
+  }, [editingSchedule]);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -109,7 +141,7 @@ function ScheduleForm({ onAddSchedule }) {
     }
 
     try {
-      await onAddSchedule({
+      const payload = {
         date: formData.date,
         eventType: formData.eventType,
         isLayover: formData.isLayover,
@@ -126,33 +158,51 @@ function ScheduleForm({ onAddSchedule }) {
           : "-",
         aircraft: isFlightEvent ? formData.aircraft : formData.eventType,
         destination: isFlightEvent ? formData.destination : formData.eventType,
-      });
+      };
+
+      if (isEditing) {
+        await onUpdateSchedule({
+          ...editingSchedule,
+          ...payload,
+        });
+      } else {
+        await onAddSchedule(payload);
+      }
     } catch (error) {
       return;
     }
 
-    setFormData({
-      date: "",
-      eventType: "flight",
-      isLayover: false,
-      departureTime: "",
-      arrivalTime: "",
-      hongKongDepartureDate: "",
-      hongKongDepartureTime: "",
-      hongKongArrivalTime: "",
-      aircraft: "",
-      destination: "",
-    });
+    setFormData(createInitialFormData());
     setDestinationSearch("");
     setIsDestinationOpen(false);
+
+    if (isEditing) {
+      onCancelEdit?.();
+    }
   };
 
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="min-h-[400px]">
-        <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-          {t("schedule.addTitle")}
-        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xl font-bold text-gray-900 sm:text-2xl">
+            {isEditing ? "일정 수정" : t("schedule.addTitle")}
+          </p>
+          {isEditing ? (
+            <button
+              type="button"
+              onClick={() => {
+                setFormData(createInitialFormData());
+                setDestinationSearch("");
+                setIsDestinationOpen(false);
+                onCancelEdit?.();
+              }}
+              className="inline-flex w-fit items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700"
+            >
+              수정 취소
+            </button>
+          ) : null}
+        </div>
         <form
           onSubmit={handleSubmit}
           className="mt-4 grid h-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
@@ -383,8 +433,8 @@ function ScheduleForm({ onAddSchedule }) {
             type="submit"
             className="col-span-1 inline-flex min-h-[48px] items-center justify-center gap-2 self-end rounded-2xl bg-[#1E6DEB] px-6 py-3 text-base font-semibold text-white shadow-lg transition-all hover:bg-[#1E6DEB] active:bg-[#1565C0] sm:col-span-2 lg:col-span-1"
           >
-            <span className="text-lg leading-none">+</span>
-            <span>{t("schedule.addSchedule")}</span>
+            <span className="text-lg leading-none">{isEditing ? "✓" : "+"}</span>
+            <span>{isEditing ? "수정 저장" : t("schedule.addSchedule")}</span>
           </button>
         </form>
       </div>

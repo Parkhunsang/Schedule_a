@@ -65,7 +65,7 @@ const formatDisplayTime = (time, layoverTime) => {
   return `${time} / ${layoverTime}`;
 };
 
-function ScheduleTable({ schedules, onDelete }) {
+function ScheduleTable({ schedules, onDelete, onEdit }) {
   const { t } = useTranslation();
 
   return (
@@ -182,8 +182,14 @@ function ScheduleTable({ schedules, onDelete }) {
                               </div>
                             </div>
                             <button
-                              onClick={() => onDelete(schedule.id)}
-                              className="flex h-7 w-full items-center justify-center gap-1 bg-[#E53935] py-4 text-white transition-all hover:bg-[#E53935] active:bg-red-700"
+                              onClick={() => onEdit(schedule)}
+                              className="flex h-11 w-full items-center justify-center rounded-t-2xl border-t border-[#1565C0] bg-blue-50 text-sm font-bold text-[#1565C0] transition-all hover:bg-blue-100"
+                            >
+                              수정
+                            </button>
+                            <button
+                              onClick={() => onDelete(schedule)}
+                              className="flex h-11 w-full items-center justify-center gap-1 bg-[#E53935] text-white transition-all hover:bg-[#E53935] active:bg-red-700"
                             >
                               <DeleteIcon />
                             </button>
@@ -219,12 +225,20 @@ function ScheduleTable({ schedules, onDelete }) {
                           </div>
                         </td>
                         <td className="h-full p-0 text-center">
-                          <button
-                            onClick={() => onDelete(schedule.id)}
-                            className="flex h-full w-full min-h-[68px] items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 text-base font-bold text-white transition-all hover:bg-red-700 active:bg-red-800 sm:min-w-[110px]"
-                          >
-                            <DeleteIcon />
-                          </button>
+                          <div className="flex h-full min-h-[68px] min-w-[170px] items-center gap-2 p-2">
+                            <button
+                              onClick={() => onEdit(schedule)}
+                              className="flex h-full flex-1 items-center justify-center rounded-2xl border border-[#1565C0] px-4 text-sm font-bold text-[#1565C0] transition-all hover:bg-blue-50"
+                            >
+                              수정
+                            </button>
+                            <button
+                              onClick={() => onDelete(schedule)}
+                              className="flex h-full flex-1 items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 text-base font-bold text-white transition-all hover:bg-red-700 active:bg-red-800"
+                            >
+                              <DeleteIcon />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     </React.Fragment>
