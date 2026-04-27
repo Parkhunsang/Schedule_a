@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import loadingImage from "./assets/loading.webp";
+import logoImage from "./assets/logo.png";
 import AppScreenContent from "./app/components/AppScreenContent";
 import AuthNotice from "./app/components/AuthNotice";
 import FirebaseConfigNotice from "./app/components/FirebaseConfigNotice";
@@ -113,11 +114,18 @@ function App() {
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
       <header className="mb-3 w-full bg-[#1565C0] text-white shadow-lg">
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-3 py-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold sm:text-2xl">{t("common.appTitle")}</h1>
-            <p className="mt-1 text-xs text-white/80 sm:text-sm">
-              {t("common.appSubtitle")}
-            </p>
+          <div className="flex items-center gap-3">
+            <img
+              src={logoImage}
+              alt={`${t("common.appTitle")} logo`}
+              className="h-10 w-auto shrink-0 sm:h-12"
+            />
+            <div>
+              <h1 className="text-xl font-bold sm:text-2xl">{t("common.appTitle")}</h1>
+              <p className="mt-1 text-xs text-white/80 sm:text-sm">
+                {t("common.appSubtitle")}
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-col items-start gap-3 sm:items-end">
