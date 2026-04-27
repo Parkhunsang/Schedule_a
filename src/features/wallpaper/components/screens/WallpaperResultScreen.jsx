@@ -24,7 +24,7 @@ function WallpaperResultScreen({
 
   return (
     <section className="min-w-full min-w-0 flex-none">
-      <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-5">
+      <div className="mx-auto flex w-full min-w-0 max-w-[1080px] flex-col gap-5">
         <WallpaperBuilder title={resolvedTitle} subtitle={resolvedSubtitle}>
           <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-5">
             <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:p-5">

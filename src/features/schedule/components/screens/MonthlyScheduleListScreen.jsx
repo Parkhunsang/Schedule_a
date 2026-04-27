@@ -15,7 +15,7 @@ function MonthlyScheduleListScreen({
 
   return (
     <section className="min-w-full flex-none">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+      <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-5">
         {calendarWidget}
 
         <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">

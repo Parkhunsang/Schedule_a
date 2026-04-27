@@ -30,7 +30,7 @@ function ScheduleEntryScreen({
 
   return (
     <section className="min-w-full flex-none">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+      <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-5">
         <ScheduleForm
           onAddSchedule={onAddSchedule}
           onUpdateSchedule={onUpdateSchedule}

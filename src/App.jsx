@@ -140,7 +140,7 @@ function App() {
   return (
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
       <header className="mb-3 w-full bg-[#1565C0] text-white shadow-lg">
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-3 py-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-3 px-3 py-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-3">
             <img
               src={logoImage}
@@ -199,7 +199,7 @@ function App() {
       </header>
 
       <main className="w-full flex-1">
-        <div className="mx-auto w-full max-w-3xl px-3">
+        <div className="mx-auto w-full max-w-[1080px] px-3">
           {firebaseConfigError ? (
             <FirebaseConfigNotice />
           ) : isAppLoading ? (
@@ -218,7 +218,7 @@ function App() {
           ) : (
             <>
               {shouldShowStepper(currentScreen) ? (
-                <div className="mx-auto mb-5 flex w-full max-w-3xl items-center justify-between text-sm text-gray-500">
+                <div className="mx-auto mb-5 flex w-full max-w-[1080px] items-center justify-between text-sm text-gray-500">
                   <span>
                     {t("common.step")} {STEP_MAP[currentScreen]} / 3
                   </span>
@@ -295,7 +295,7 @@ function App() {
       </main>
 
       <footer className="mt-auto w-full border-t border-gray-200 bg-white">
-        <div className="mx-auto w-full max-w-3xl px-3 py-4 text-center sm:py-6">
+        <div className="mx-auto w-full max-w-[1080px] px-3 py-4 text-center sm:py-6">
           <p className="text-xs opacity-75 sm:text-sm">
             {t("common.footer")}
           </p>
