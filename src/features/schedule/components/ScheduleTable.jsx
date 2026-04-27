@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import editIcon from "../../../assets/edit.svg";
 import { getEventTypeLabel } from "../../wallpaper/constants/eventTypes";
 
 function DeleteIcon() {
@@ -65,6 +66,24 @@ const formatDisplayTime = (time, layoverTime) => {
   return `${time} / ${layoverTime}`;
 };
 
+function EditButton({ onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Edit schedule"
+      className="inline-flex items-center justify-center rounded-2xl bg-[#1E6DEB] px-4 py-3 text-white shadow-sm transition hover:bg-[#1565C0] active:bg-[#0D47A1]"
+    >
+      <img
+        src={editIcon}
+        alt=""
+        aria-hidden="true"
+        className="h-4 w-4 brightness-0 invert"
+      />
+    </button>
+  );
+}
+
 function ScheduleTable({ schedules, onDelete, onEdit }) {
   const { t } = useTranslation();
 
@@ -104,7 +123,7 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                     {t("schedule.details")}
                   </th>
                   <th className="px-3 py-2 text-center font-semibold sm:px-4 sm:py-3 md:px-6">
-                    액션
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -181,18 +200,17 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                                 </div>
                               </div>
                             </div>
-                            <button
-                              onClick={() => onEdit(schedule)}
-                              className="flex h-11 w-full items-center justify-center rounded-t-2xl border-t border-[#1565C0] bg-blue-50 text-sm font-bold text-[#1565C0] transition-all hover:bg-blue-100"
-                            >
-                              수정
-                            </button>
-                            <button
-                              onClick={() => onDelete(schedule)}
-                              className="flex h-11 w-full items-center justify-center gap-1 bg-[#E53935] text-white transition-all hover:bg-[#E53935] active:bg-red-700"
-                            >
-                              <DeleteIcon />
-                            </button>
+                            <div className="grid grid-cols-2 gap-2 border-t border-gray-100 p-3">
+                              <EditButton onClick={() => onEdit(schedule)} />
+                              <button
+                                type="button"
+                                onClick={() => onDelete(schedule)}
+                                aria-label="Delete schedule"
+                                className="inline-flex items-center justify-center rounded-2xl bg-red-600 px-4 py-3 text-white shadow-sm transition hover:bg-red-700 active:bg-red-800"
+                              >
+                                <DeleteIcon />
+                              </button>
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -225,16 +243,13 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                           </div>
                         </td>
                         <td className="h-full p-0 text-center">
-                          <div className="flex h-full min-h-[68px] min-w-[170px] items-center gap-2 p-2">
+                          <div className="flex h-full min-h-[68px] min-w-[150px] items-center justify-center gap-2 p-2">
+                            <EditButton onClick={() => onEdit(schedule)} />
                             <button
-                              onClick={() => onEdit(schedule)}
-                              className="flex h-full flex-1 items-center justify-center rounded-2xl border border-[#1565C0] px-4 text-sm font-bold text-[#1565C0] transition-all hover:bg-blue-50"
-                            >
-                              수정
-                            </button>
-                            <button
+                              type="button"
                               onClick={() => onDelete(schedule)}
-                              className="flex h-full flex-1 items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 text-base font-bold text-white transition-all hover:bg-red-700 active:bg-red-800"
+                              aria-label="Delete schedule"
+                              className="inline-flex h-full items-center justify-center rounded-2xl bg-red-600 px-4 text-white shadow-sm transition hover:bg-red-700 active:bg-red-800"
                             >
                               <DeleteIcon />
                             </button>
