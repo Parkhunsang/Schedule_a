@@ -104,7 +104,7 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                     {t("schedule.details")}
                   </th>
                   <th className="px-3 py-2 text-center font-semibold sm:px-4 sm:py-3 md:px-6">
-                    {t("schedule.delete")}
+                    액션
                   </th>
                 </tr>
               </thead>

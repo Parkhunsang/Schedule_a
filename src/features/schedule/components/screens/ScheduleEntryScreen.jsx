@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ScheduleForm from "../ScheduleForm";
 import ScheduleTable from "../ScheduleTable";
@@ -16,6 +16,17 @@ function ScheduleEntryScreen({
 }) {
   const { t } = useTranslation();
   const [editingSchedule, setEditingSchedule] = useState(null);
+
+  useEffect(() => {
+    if (!editingSchedule || typeof window === "undefined") {
+      return;
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [editingSchedule]);
 
   return (
     <section className="min-w-full flex-none">

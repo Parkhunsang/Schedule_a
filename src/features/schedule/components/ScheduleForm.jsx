@@ -128,6 +128,12 @@ function ScheduleForm({
     setIsDestinationOpen(false);
   };
 
+  const resetEditingState = () => {
+    setFormData(createInitialFormData());
+    setDestinationSearch("");
+    setIsDestinationOpen(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -181,9 +187,7 @@ function ScheduleForm({
       return;
     }
 
-    setFormData(createInitialFormData());
-    setDestinationSearch("");
-    setIsDestinationOpen(false);
+    resetEditingState();
 
     if (isEditing) {
       onCancelEdit?.();
@@ -201,9 +205,7 @@ function ScheduleForm({
             <button
               type="button"
               onClick={() => {
-                setFormData(createInitialFormData());
-                setDestinationSearch("");
-                setIsDestinationOpen(false);
+                resetEditingState();
                 onCancelEdit?.();
               }}
               className="inline-flex w-fit items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700"
@@ -212,6 +214,7 @@ function ScheduleForm({
             </button>
           ) : null}
         </div>
+
         <form
           onSubmit={handleSubmit}
           className="mt-4 grid h-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
@@ -443,7 +446,7 @@ function ScheduleForm({
             className="col-span-1 inline-flex min-h-[48px] items-center justify-center gap-2 self-end rounded-2xl bg-[#1E6DEB] px-6 py-3 text-base font-semibold text-white shadow-lg transition-all hover:bg-[#1E6DEB] active:bg-[#1565C0] sm:col-span-2 lg:col-span-1"
           >
             <span className="text-lg leading-none">{isEditing ? "✓" : "+"}</span>
-            <span>{isEditing ? "수정 저장" : t("schedule.addSchedule")}</span>
+            <span>{isEditing ? "수정 완료" : t("schedule.addSchedule")}</span>
           </button>
         </form>
       </div>
