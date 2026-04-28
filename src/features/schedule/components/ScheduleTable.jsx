@@ -100,9 +100,6 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
         </div>
       ) : (
         <div className="min-h-[200px]">
-          <p className="mb-4 text-xl font-bold text-gray-900 sm:mb-6 sm:text-2xl">
-            {t("schedule.listTitle")}
-          </p>
           <div className="overflow-x-auto">
             <table className="w-full border-separate border-spacing-x-0 border-spacing-y-[6px] text-sm md:text-base">
               <thead className="hidden sm:table-header-group">
