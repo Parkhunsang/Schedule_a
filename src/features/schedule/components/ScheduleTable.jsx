@@ -66,6 +66,52 @@ const formatDisplayTime = (time, layoverTime) => {
   return `${time} / ${layoverTime}`;
 };
 
+const getModalDetailRows = (schedule, t) => {
+  const rows = [
+    {
+      label: t("schedule.eventType"),
+      value: getScheduleEventTypeLabel(schedule, t),
+    },
+    {
+      label: t("schedule.aircraft"),
+      value: getAircraftLabel(schedule, t),
+    },
+    {
+      label: t("schedule.departureTime"),
+      value: schedule.departureTime || "-",
+    },
+    {
+      label: t("schedule.arrivalTime"),
+      value: schedule.arrivalTime || "-",
+    },
+    {
+      label: t("schedule.destination"),
+      value: getDestinationLabel(schedule, t),
+    },
+  ];
+
+  if (schedule.isLayover) {
+    rows.splice(
+      4,
+      0,
+      {
+        label: t("schedule.hongKongDepartureDate"),
+        value: schedule.hongKongDepartureDate || "-",
+      },
+      {
+        label: t("schedule.hongKongDepartureTime"),
+        value: schedule.hongKongDepartureTime || "-",
+      },
+      {
+        label: t("schedule.hongKongArrivalTime"),
+        value: schedule.hongKongArrivalTime || "-",
+      },
+    );
+  }
+
+  return rows;
+};
+
 function EditButton({ onClick }) {
   return (
     <button
@@ -86,9 +132,25 @@ function EditButton({ onClick }) {
 
 function ScheduleTable({ schedules, onDelete, onEdit }) {
   const { t } = useTranslation();
+  const [selectedSchedule, setSelectedSchedule] = React.useState(null);
+
+  React.useEffect(() => {
+    if (!selectedSchedule || typeof document === "undefined") {
+      return undefined;
+    }
+
+    const { body } = document;
+    const previousOverflow = body.style.overflow;
+    body.style.overflow = "hidden";
+
+    return () => {
+      body.style.overflow = previousOverflow;
+    };
+  }, [selectedSchedule]);
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+    <>
+      <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
       {schedules.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-600">
           <p className="mb-2 text-base font-medium sm:text-lg">
@@ -151,53 +213,29 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                           <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white">
                             <div className="space-y-3 p-4">
                               <div className="flex items-center justify-between gap-3 border-b border-gray-100 pb-2 text-xs text-gray-900">
-                                <div>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedSchedule(schedule)}
+                                  className="text-left"
+                                >
                                   <p className="font-light">{t("schedule.date")}</p>
-                                  <p className="text-sm font-light">
+                                  <p className="text-sm font-light text-[#1565C0] underline underline-offset-2">
                                     {schedule.date}
                                   </p>
-                                </div>
+                                </button>
                                 <span
-                                  className={`inline-flex items-center justify-center rounded-full px-3 py-1 font-medium ${badgeStyle}`}
+                                  className={`inline-flex min-w-[72px] items-center justify-center whitespace-nowrap rounded-full px-3 py-1 font-medium leading-none ${badgeStyle}`}
                                 >
                                   {getScheduleEventTypeLabel(schedule, t)}
                                 </span>
                               </div>
-                              <div className="grid grid-cols-2 gap-2 border-b border-gray-100 pb-2 text-xs">
-                                <div className="flex flex-col gap-1">
-                                  <p className="font-semibold text-gray-500">
-                                    {t("schedule.departure")}
-                                  </p>
-                                  <p className="text-sm font-normal">
-                                    {departureDisplay}
-                                  </p>
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                  <p className="font-semibold text-gray-500">
-                                    {t("schedule.aircraft")}
-                                  </p>
-                                  <span className="inline-flex items-center justify-center rounded-full bg-[#E0F2FE] px-3 py-1 font-medium text-[#0369A1]">
-                                    {aircraftLabel}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-2 gap-2 text-xs">
-                                <div className="flex flex-col gap-1">
-                                  <p className="font-semibold text-gray-500">
-                                    {t("schedule.arrival")}
-                                  </p>
-                                  <p className="text-sm font-normal">
-                                    {arrivalDisplay}
-                                  </p>
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                  <p className="font-semibold text-gray-500">
-                                    {t("schedule.destination")}
-                                  </p>
-                                  <span className="inline-flex items-center justify-center rounded-full bg-[#CCFBF1] px-3 py-1 font-medium text-[#0F766E]">
-                                    {destinationLabel}
-                                  </span>
-                                </div>
+                              <div className="rounded-2xl bg-[#F8FAFC] px-4 py-3 text-center">
+                                <p className="text-xs font-medium text-gray-500">
+                                  {t("schedule.category")}
+                                </p>
+                                <p className="mt-1 whitespace-nowrap text-base font-semibold leading-none text-gray-900">
+                                  {getScheduleEventTypeLabel(schedule, t)}
+                                </p>
                               </div>
                             </div>
                             <div className="grid grid-cols-2 gap-2 border-t border-gray-100 p-3">
@@ -217,11 +255,17 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
 
                       <tr className="hidden h-[68px] border-b border-gray-200 bg-white text-sm transition-colors hover:bg-gray-50 sm:table-row md:text-base">
                         <td className="px-3 py-2 sm:px-4 md:px-6">
-                          {schedule.date}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedSchedule(schedule)}
+                            className="text-left text-[#1565C0] underline underline-offset-2"
+                          >
+                            {schedule.date}
+                          </button>
                         </td>
                         <td className="px-3 py-2 sm:px-4 md:px-6">
                           <span
-                            className={`inline-flex min-w-[96px] items-center justify-center rounded-full px-3 py-1 text-xs font-medium sm:text-sm ${badgeStyle}`}
+                            className={`inline-flex min-w-[112px] items-center justify-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium leading-none sm:text-sm ${badgeStyle}`}
                           >
                             {getScheduleEventTypeLabel(schedule, t)}
                           </span>
@@ -234,10 +278,10 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                         </td>
                         <td className="px-3 py-2 sm:px-4 md:px-6">
                           <div className="flex flex-col gap-2">
-                            <span className="inline-flex min-w-[120px] items-center justify-center rounded-full bg-[#E0F2FE] px-3 py-1 text-xs font-medium text-[#0369A1] sm:text-sm">
+                            <span className="inline-flex min-w-[120px] items-center justify-center whitespace-nowrap rounded-full bg-[#E0F2FE] px-3 py-1 text-xs font-medium leading-none text-[#0369A1] sm:text-sm">
                               {aircraftLabel}
                             </span>
-                            <span className="inline-flex min-w-[120px] items-center justify-center rounded-full bg-[#CCFBF1] px-3 py-1 text-xs font-medium text-[#0F766E] sm:text-sm">
+                            <span className="inline-flex min-w-[120px] items-center justify-center whitespace-nowrap rounded-full bg-[#CCFBF1] px-3 py-1 text-xs font-medium leading-none text-[#0F766E] sm:text-sm">
                               {destinationLabel}
                             </span>
                           </div>
@@ -267,7 +311,50 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
           </div>
         </div>
       )}
-    </section>
+      </section>
+
+      {selectedSchedule ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <button
+            type="button"
+            aria-label="Close schedule details"
+            className="absolute inset-0"
+            onClick={() => setSelectedSchedule(null)}
+          />
+          <div className="relative z-10 w-full max-w-md rounded-3xl bg-white p-5 shadow-2xl sm:p-6">
+            <div className="flex items-start justify-between gap-4 border-b border-gray-100 pb-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500">{t("schedule.date")}</p>
+                <p className="mt-1 text-xl font-semibold text-gray-900">
+                  {selectedSchedule.date}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedSchedule(null)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-lg text-gray-500 transition hover:bg-gray-50"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              {getModalDetailRows(selectedSchedule, t).map((item) => (
+                <div
+                  key={item.label}
+                  className="flex items-start justify-between gap-4 rounded-2xl bg-[#F8FAFC] px-4 py-3"
+                >
+                  <p className="text-sm font-medium text-gray-500">{item.label}</p>
+                  <p className="text-right text-sm font-semibold text-gray-900">
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
 
