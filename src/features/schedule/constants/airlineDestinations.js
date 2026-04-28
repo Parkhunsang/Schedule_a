@@ -33,7 +33,7 @@ const CATHAY_PACIFIC_DESTINATIONS = {
       "Hangzhou (HGH)",
       "Nanjing (NKG)",
       "Qingdao (TAO)",
-      "Shanghai (PVG)",
+      "Shanghai Pudong (PVG)",
       "Wuhan (WUH)",
       "Xi'an (XIY)",
       "Xiamen (XMN)",
@@ -262,11 +262,222 @@ const GREATER_BAY_AIRLINES_DESTINATIONS = {
   },
 };
 
+const KOREAN_AIR_DESTINATIONS = {
+  "South Korea": {
+    flag: "KR",
+    cities: [
+      "Busan (PUS)",
+      "Cheongju (CJJ)",
+      "Daegu (TAE)",
+      "Gwangju (KWJ)",
+      "Jeju (CJU)",
+      "Jinju Sacheon (HIN)",
+      "Seoul Gimpo (GMP)",
+      "Seoul Incheon (ICN)",
+      "Ulsan (USN)",
+      "Yeosu (RSU)",
+    ],
+  },
+  Japan: {
+    flag: "JP",
+    cities: [
+      "Aomori (AOJ)",
+      "Fukuoka (FUK)",
+      "Kagoshima (KOJ)",
+      "Komatsu (KMQ)",
+      "Kumamoto (KMJ)",
+      "Nagasaki (NGS)",
+      "Nagoya (NGO)",
+      "Niigata (KIJ)",
+      "Okayama (OKJ)",
+      "Okinawa Naha (OKA)",
+      "Osaka Kansai (KIX)",
+      "Osaka Kobe (UKB)",
+      "Sapporo (CTS)",
+      "Tokyo Haneda (HND)",
+      "Tokyo Narita (NRT)",
+    ],
+  },
+  "Chinese Mainland": {
+    flag: "CN",
+    cities: [
+      "Beijing (PEK)",
+      "Changsha (CSX)",
+      "Dalian (DLC)",
+      "Fuzhou (FOC)",
+      "Guangzhou (CAN)",
+      "Hangzhou (HGH)",
+      "Hefei (HFE)",
+      "Kunming (KMG)",
+      "Nanjing (NKG)",
+      "Qingdao (TAO)",
+      "Shanghai Hongqiao (SHA)",
+      "Shanghai Pudong (PVG)",
+      "Shenyang (SHE)",
+      "Shenzhen (SZX)",
+      "Tianjin (TSN)",
+      "Wuhan (WUH)",
+      "Xi'an (XIY)",
+      "Xiamen (XMN)",
+      "Yanji (YNJ)",
+      "Zhangjiajie (DYG)",
+      "Zhengzhou (CGO)",
+    ],
+  },
+  "Hong Kong SAR": {
+    flag: "HK",
+    cities: ["Hong Kong (HKG)"],
+  },
+  Macau: {
+    flag: "MO",
+    cities: ["Macau (MFM)"],
+  },
+  Taiwan: {
+    flag: "TW",
+    cities: ["Taichung (RMQ)", "Taipei (TPE)"],
+  },
+  Thailand: {
+    flag: "TH",
+    cities: [
+      "Bangkok Suvarnabhumi (BKK)",
+      "Chiang Mai (CNX)",
+      "Phuket (HKT)",
+    ],
+  },
+  Philippines: {
+    flag: "PH",
+    cities: ["Cebu (CEB)", "Manila (MNL)"],
+  },
+  Nepal: {
+    flag: "NP",
+    cities: ["Kathmandu (KTM)"],
+  },
+  Malaysia: {
+    flag: "MY",
+    cities: ["Kuala Lumpur (KUL)"],
+  },
+  India: {
+    flag: "IN",
+    cities: ["Delhi (DEL)"],
+  },
+  Cambodia: {
+    flag: "KH",
+    cities: ["Phnom Penh (KTI)"],
+  },
+  Singapore: {
+    flag: "SG",
+    cities: ["Singapore (SIN)"],
+  },
+  Myanmar: {
+    flag: "MM",
+    cities: ["Yangon (RGN)"],
+  },
+  Vietnam: {
+    flag: "VN",
+    cities: [
+      "Da Nang (DAD)",
+      "Hanoi (HAN)",
+      "Ho Chi Minh City (SGN)",
+      "Nha Trang Cam Ranh (CXR)",
+      "Phu Quoc (PQC)",
+    ],
+  },
+  Indonesia: {
+    flag: "ID",
+    cities: ["Bali Denpasar (DPS)", "Jakarta (CGK)"],
+  },
+  "United States": {
+    flag: "US",
+    cities: [
+      "Atlanta (ATL)",
+      "Boston (BOS)",
+      "Chicago (ORD)",
+      "Dallas (DFW)",
+      "Guam (GUM)",
+      "Honolulu (HNL)",
+      "Las Vegas (LAS)",
+      "Los Angeles (LAX)",
+      "New York (JFK)",
+      "San Francisco (SFO)",
+      "Seattle (SEA)",
+      "Washington Dulles (IAD)",
+    ],
+  },
+  Canada: {
+    flag: "CA",
+    cities: ["Toronto (YYZ)", "Vancouver (YVR)"],
+  },
+  France: {
+    flag: "FR",
+    cities: ["Paris (CDG)"],
+  },
+  "United Kingdom": {
+    flag: "GB",
+    cities: ["London Heathrow (LHR)"],
+  },
+  Spain: {
+    flag: "ES",
+    cities: ["Madrid (MAD)"],
+  },
+  Czechia: {
+    flag: "CZ",
+    cities: ["Prague (PRG)"],
+  },
+  Switzerland: {
+    flag: "CH",
+    cities: ["Zurich (ZRH)"],
+  },
+  Portugal: {
+    flag: "PT",
+    cities: ["Lisbon (LIS)"],
+  },
+  Netherlands: {
+    flag: "NL",
+    cities: ["Amsterdam (AMS)"],
+  },
+  Italy: {
+    flag: "IT",
+    cities: ["Milan (MXP)", "Rome (FCO)"],
+  },
+  Austria: {
+    flag: "AT",
+    cities: ["Vienna (VIE)"],
+  },
+  Germany: {
+    flag: "DE",
+    cities: ["Frankfurt (FRA)"],
+  },
+  Turkiye: {
+    flag: "TR",
+    cities: ["Istanbul (IST)"],
+  },
+  Hungary: {
+    flag: "HU",
+    cities: ["Budapest (BUD)"],
+  },
+  Mongolia: {
+    flag: "MN",
+    cities: ["Ulaanbaatar (UBN)"],
+  },
+  "United Arab Emirates": {
+    flag: "AE",
+    cities: ["Dubai (DXB)"],
+  },
+  Australia: {
+    flag: "AU",
+    cities: ["Brisbane (BNE)", "Sydney (SYD)"],
+  },
+  "New Zealand": {
+    flag: "NZ",
+    cities: ["Auckland (AKL)"],
+  },
+};
+
 const AIRLINE_DESTINATIONS = {
   [DEFAULT_AIRLINE_CODE]: {
     names: {
-      ko: "기본 노선",
-      en: "Default routes",
+      ko: "홍콩항공",
+      en: "Hong Kong Airlines",
     },
     destinations: DESTINATIONS,
   },
@@ -290,6 +501,13 @@ const AIRLINE_DESTINATIONS = {
       en: "Greater Bay Airlines",
     },
     destinations: GREATER_BAY_AIRLINES_DESTINATIONS,
+  },
+  koreanAir: {
+    names: {
+      ko: "대한항공",
+      en: "Korean Air",
+    },
+    destinations: KOREAN_AIR_DESTINATIONS,
   },
 };
 
