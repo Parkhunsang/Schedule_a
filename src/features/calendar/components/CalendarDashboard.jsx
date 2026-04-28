@@ -146,11 +146,7 @@ function CalendarDashboard({
               >
                 {language === "ko" ? "오늘" : "Today"}
               </button>
-              <button
-                type="button"
-                onClick={onPrevMonth}
-                className="rounded-full border border-slate-300 bg-white p-1 text-sm font-semibold text-slate-700"
-              >
+              <button type="button" onClick={onPrevMonth}>
                 <span
                   aria-hidden="true"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform"
@@ -162,11 +158,7 @@ function CalendarDashboard({
                   />
                 </span>
               </button>
-              <button
-                type="button"
-                onClick={onNextMonth}
-                className="rounded-full border border-slate-300 bg-white p-1 text-sm font-semibold text-slate-700"
-              >
+              <button type="button" onClick={onNextMonth}>
                 <span
                   aria-hidden="true"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform"
