@@ -149,7 +149,7 @@ function CalendarDashboard({
               <button
                 type="button"
                 onClick={onPrevMonth}
-                className="rounded-full border border-slate-300 bg-white p-1 text-sm font-semibold text-slate-700"
+                className="inline-flex items-center justify-center"
               >
                 <span
                   aria-hidden="true"
@@ -165,7 +165,7 @@ function CalendarDashboard({
               <button
                 type="button"
                 onClick={onNextMonth}
-                className="rounded-full border border-slate-300 bg-white p-1 text-sm font-semibold text-slate-700"
+                className="inline-flex items-center justify-center"
               >
                 <span
                   aria-hidden="true"
