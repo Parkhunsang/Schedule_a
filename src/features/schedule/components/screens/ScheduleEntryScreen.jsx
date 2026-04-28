@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import downButtonIcon from "../../../../assets/down_button.svg";
 import ScheduleForm from "../ScheduleForm";
 import ScheduleTable from "../ScheduleTable";
+import upButtonIcon from "../../../../assets/up_button.svg";
 
 function CollapsibleSection({
   title,
@@ -23,11 +25,13 @@ function CollapsibleSection({
           </span>
           <span
             aria-hidden="true"
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform"
           >
-            ˅
+            <img
+              src={isOpen ? upButtonIcon : downButtonIcon}
+              alt=""
+              className="h-5 w-5"
+            />
           </span>
         </button>
         {actions}
