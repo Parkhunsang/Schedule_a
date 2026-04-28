@@ -38,12 +38,26 @@ export const getEventTypeLabel = (eventType, language = "en") =>
   EVENT_TYPE_LABELS[eventType]?.en ??
   eventType;
 
+const getFlightNumber = (schedule) =>
+  schedule.aircraft ||
+  schedule.flightNumber ||
+  schedule.flightNo ||
+  schedule.flight ||
+  "";
+
+const getDestination = (schedule) =>
+  schedule.destination ||
+  schedule.arrivalAirport ||
+  schedule.destinationName ||
+  schedule.city ||
+  "";
+
 export const buildScheduleSummary = (schedule, language = "en") => {
   const label = getEventTypeLabel(schedule.eventType, language);
 
   if (schedule.eventType === "flight") {
-    const flightNumber = schedule.aircraft?.trim();
-    const destination = schedule.destination?.trim();
+    const flightNumber = getFlightNumber(schedule)?.trim();
+    const destination = getDestination(schedule)?.trim();
 
     if (flightNumber && destination) {
       return `${label} ${flightNumber} · ${destination}`;
@@ -60,6 +74,9 @@ export const buildScheduleSummary = (schedule, language = "en") => {
 
   return label;
 };
+
+export const buildCalendarScheduleChipLabel = (schedule, language = "en") =>
+  getEventTypeLabel(schedule.eventType ?? "flight", language);
 
 export const buildScheduleDescription = (schedule, language = "en") => {
   const lines = [];
@@ -214,7 +231,9 @@ export const buildCalendarEntriesByDate = ({
     const existingEntries = map.get(schedule.date) ?? [];
     existingEntries.push({
       id: `app-${schedule.id}`,
-      title: buildScheduleSummary(schedule, language),
+      source: "app",
+      schedule,
+      title: buildCalendarScheduleChipLabel(schedule, language),
       colorClass:
         schedule.eventType === "flight"
           ? "bg-sky-100 text-sky-800"
@@ -241,6 +260,8 @@ export const buildCalendarEntriesByDate = ({
     const existingEntries = map.get(dateText) ?? [];
     existingEntries.push({
       id: `google-${event.id}`,
+      source: "google",
+      event,
       title: event.summary || "Google Calendar event",
       colorClass: "bg-emerald-100 text-emerald-800",
     });
