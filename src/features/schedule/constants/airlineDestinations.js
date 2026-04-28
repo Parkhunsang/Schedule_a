@@ -14,14 +14,6 @@ const CATHAY_PACIFIC_DESTINATIONS = {
       "Sydney (SYD)",
     ],
   },
-  Bangladesh: {
-    flag: "BD",
-    cities: ["Dhaka (DAC)"],
-  },
-  Belgium: {
-    flag: "BE",
-    cities: ["Brussels (BRU)"],
-  },
   Cambodia: {
     flag: "KH",
     cities: ["Phnom Penh (KTI)"],
@@ -55,10 +47,6 @@ const CATHAY_PACIFIC_DESTINATIONS = {
   Germany: {
     flag: "DE",
     cities: ["Frankfurt (FRA)", "Munich (MUC)"],
-  },
-  "Hong Kong SAR": {
-    flag: "HK",
-    cities: ["Hong Kong (HKG)"],
   },
   India: {
     flag: "IN",
@@ -109,10 +97,6 @@ const CATHAY_PACIFIC_DESTINATIONS = {
     flag: "NL",
     cities: ["Amsterdam (AMS)"],
   },
-  "New Zealand": {
-    flag: "NZ",
-    cities: ["Auckland (AKL)", "Christchurch (CHC)"],
-  },
   Philippines: {
     flag: "PH",
     cities: ["Cebu (CEB)", "Manila (MNL)"],
@@ -159,7 +143,11 @@ const CATHAY_PACIFIC_DESTINATIONS = {
   },
   "United Kingdom": {
     flag: "GB",
-    cities: ["London Gatwick (LGW)", "London Heathrow (LHR)", "Manchester (MAN)"],
+    cities: [
+      "London Gatwick (LGW)",
+      "London Heathrow (LHR)",
+      "Manchester (MAN)",
+    ],
   },
   "United States": {
     flag: "US",
@@ -179,6 +167,101 @@ const CATHAY_PACIFIC_DESTINATIONS = {
   },
 };
 
+const HONG_KONG_EXPRESS_DESTINATIONS = {
+  "South Korea": {
+    flag: "KR",
+    cities: ["Busan (PUS)", "Daegu (TAE)", "Jeju (CJU)", "Seoul (ICN)"],
+  },
+  "Chinese Mainland": {
+    flag: "CN",
+    cities: ["Beijing Daxing (PKX)", "Ningbo (NGB)", "Sanya (SYX)"],
+  },
+  Taiwan: {
+    flag: "TW",
+    cities: [
+      "Hualien (HUN)",
+      "Kaohsiung (KHH)",
+      "Taichung (RMQ)",
+      "Taipei (TPE)",
+    ],
+  },
+  Japan: {
+    flag: "JP",
+    cities: [
+      "Fukuoka (FUK)",
+      "Hiroshima (HIJ)",
+      "Ishigaki (ISG)",
+      "Kagoshima (KOJ)",
+      "Komatsu (KMQ)",
+      "Miyakojima Shimojishima (SHI)",
+      "Nagoya (NGO)",
+      "Osaka (KIX)",
+      "Takamatsu (TAK)",
+      "Tokyo Haneda (HND)",
+      "Tokyo Narita (NRT)",
+    ],
+  },
+  Vietnam: {
+    flag: "VN",
+    cities: ["Da Nang (DAD)", "Hanoi (HAN)", "Phu Quoc (PQC)"],
+  },
+  Philippines: {
+    flag: "PH",
+    cities: ["Clark (CRK)", "Manila (MNL)"],
+  },
+  Thailand: {
+    flag: "TH",
+    cities: [
+      "Bangkok Don Mueang (DMK)",
+      "Bangkok Suvarnabhumi (BKK)",
+      "Chiang Mai (CNX)",
+      "Phuket (HKT)",
+    ],
+  },
+  Malaysia: {
+    flag: "MY",
+    cities: ["Penang (PEN)"],
+  },
+};
+
+const GREATER_BAY_AIRLINES_DESTINATIONS = {
+  Japan: {
+    flag: "JP",
+    cities: [
+      "Osaka (KIX)",
+      "Sendai (SDJ)",
+      "Sapporo (CTS)",
+      "Tokyo Narita (NRT)",
+    ],
+  },
+  "Chinese Mainland": {
+    flag: "CN",
+    cities: [
+      "Changsha (CSX)",
+      "Huangshan (TXN)",
+      "Quanzhou (JJN)",
+      "Yichang (YIH)",
+      "Zhoushan (HSN)",
+    ],
+  },
+  Taiwan: {
+    flag: "TW",
+    cities: ["Taipei (TPE)"],
+  },
+  Thailand: {
+    flag: "TH",
+    cities: ["Bangkok Suvarnabhumi (BKK)"],
+  },
+  Philippines: {
+    flag: "PH",
+    cities: ["Manila (MNL)"],
+  },
+  Vietnam: {
+    flag: "VN",
+    cities: ["Phu Quoc (PQC)"],
+  },
+};
+
 const AIRLINE_DESTINATIONS = {
   [DEFAULT_AIRLINE_CODE]: {
     names: {
@@ -193,6 +276,20 @@ const AIRLINE_DESTINATIONS = {
       en: "Cathay Pacific",
     },
     destinations: CATHAY_PACIFIC_DESTINATIONS,
+  },
+  hongKongExpress: {
+    names: {
+      ko: "홍콩 익스프레스",
+      en: "HK Express",
+    },
+    destinations: HONG_KONG_EXPRESS_DESTINATIONS,
+  },
+  greaterBayAirlines: {
+    names: {
+      ko: "그레이터베이항공",
+      en: "Greater Bay Airlines",
+    },
+    destinations: GREATER_BAY_AIRLINES_DESTINATIONS,
   },
 };
 
