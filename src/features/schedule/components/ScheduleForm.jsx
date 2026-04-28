@@ -198,9 +198,7 @@ function ScheduleForm({
     <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="min-h-[400px]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-            {isEditing ? "일정 수정" : t("schedule.addTitle")}
-          </p>
+          
           {isEditing ? (
             <button
               type="button"
