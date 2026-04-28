@@ -152,7 +152,9 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                             <div className="space-y-3 p-4">
                               <div className="flex items-center justify-between gap-3 border-b border-gray-100 pb-2 text-xs text-gray-900">
                                 <div>
-                                  <p className="font-light">{t("schedule.date")}</p>
+                                  <p className="font-light">
+                                    {t("schedule.date")}
+                                  </p>
                                   <p className="text-sm font-light">
                                     {schedule.date}
                                   </p>
@@ -249,7 +251,7 @@ function ScheduleTable({ schedules, onDelete, onEdit }) {
                               type="button"
                               onClick={() => onDelete(schedule)}
                               aria-label="Delete schedule"
-                              className="inline-flex h-full items-center justify-center rounded-2xl bg-red-600 px-4 text-white shadow-sm transition hover:bg-red-700 active:bg-red-800"
+                              className="inline-flex items-center justify-center rounded-2xl bg-red-600 px-4 py-3 text-white shadow-sm transition hover:bg-red-700 active:bg-red-800"
                             >
                               <DeleteIcon />
                             </button>
