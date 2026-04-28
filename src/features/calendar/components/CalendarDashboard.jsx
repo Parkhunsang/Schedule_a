@@ -1,13 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import NextButtonIcon from "../../../assets/next_button.svg";
+import PrevButtonIcon from "../../../assets/prev_button.svg";
 import {
   buildCalendarEntriesByDate,
   buildMonthGrid,
   formatCalendarMonthLabel,
   getEventTypeLabel,
 } from "../utils/calendarUtils";
-import NextButtonIcon from "../../../assets/next_button.svg";
-import PrevButtonIcon from "../../../assets/prev_button.svg";
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const WEEKDAY_LABELS_KO = ["일", "월", "화", "수", "목", "금", "토"];
@@ -53,8 +53,7 @@ const getScheduleDetailRows = (schedule, language) => {
         value: schedule.hongKongDepartureDate || "-",
       },
       {
-        label:
-          language === "ko" ? "레이오버 출발시간" : "Layover departure time",
+        label: language === "ko" ? "레이오버 출발시간" : "Layover departure time",
         value: schedule.hongKongDepartureTime || "-",
       },
       {
@@ -145,38 +144,6 @@ function CalendarDashboard({
                 className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
               >
                 {language === "ko" ? "오늘" : "Today"}
-              </button>
-              <button
-                type="button"
-                onClick={onPrevMonth}
-                className="inline-flex items-center justify-center"
-              >
-                <span
-                  aria-hidden="true"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform"
-                >
-                  <img
-                    src={PrevButtonIcon}
-                    alt="이전 버튼"
-                    className="h-5 w-5"
-                  />
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={onNextMonth}
-                className="inline-flex items-center justify-center"
-              >
-                <span
-                  aria-hidden="true"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform"
-                >
-                  <img
-                    src={NextButtonIcon}
-                    alt="다음버튼"
-                    className="h-5 w-5"
-                  />
-                </span>
               </button>
               {isCalendarAvailable ? (
                 isCalendarConnected ? (
@@ -301,20 +268,31 @@ function CalendarDashboard({
               })}
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-              <span className="rounded-full bg-sky-100 px-2.5 py-1 font-medium text-sky-800">
-                {language === "ko" ? "앱 일정" : "App schedule"}
-              </span>
-              <span className="rounded-full bg-emerald-100 px-2.5 py-1 font-medium text-emerald-800">
-                {language === "ko" ? "Google 일정" : "Google events"}
-              </span>
-              {isLoadingCalendarEvents ? (
-                <span>
-                  {language === "ko"
-                    ? "Google 일정을 불러오는 중..."
-                    : "Loading Google events..."}
+            <div className="mt-4 flex items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={onPrevMonth}
+                className="inline-flex items-center justify-center"
+              >
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform"
+                >
+                  <img src={PrevButtonIcon} alt="" className="h-5 w-5" />
                 </span>
-              ) : null}
+              </button>
+              <button
+                type="button"
+                onClick={onNextMonth}
+                className="inline-flex items-center justify-center"
+              >
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EFF6FF] text-[#1565C0] transition-transform"
+                >
+                  <img src={NextButtonIcon} alt="" className="h-5 w-5" />
+                </span>
+              </button>
             </div>
           </div>
         </div>
@@ -363,21 +341,19 @@ function CalendarDashboard({
 
                   {entry.source === "app" ? (
                     <div className="mt-3 space-y-2">
-                      {getScheduleDetailRows(entry.schedule, language).map(
-                        (item) => (
-                          <div
-                            key={`${entry.id}-${item.label}`}
-                            className="flex items-start justify-between gap-4 rounded-2xl bg-white px-4 py-3"
-                          >
-                            <p className="text-sm font-medium text-slate-500">
-                              {item.label}
-                            </p>
-                            <p className="text-right text-sm font-semibold text-slate-900">
-                              {item.value}
-                            </p>
-                          </div>
-                        ),
-                      )}
+                      {getScheduleDetailRows(entry.schedule, language).map((item) => (
+                        <div
+                          key={`${entry.id}-${item.label}`}
+                          className="flex items-start justify-between gap-4 rounded-2xl bg-white px-4 py-3"
+                        >
+                          <p className="text-sm font-medium text-slate-500">
+                            {item.label}
+                          </p>
+                          <p className="text-right text-sm font-semibold text-slate-900">
+                            {item.value}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="mt-3 rounded-2xl bg-white px-4 py-3">
