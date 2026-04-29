@@ -2,6 +2,19 @@
 
 HAN BI SCHEDULE는 월별 비행 일정을 정리하고, 결과를 배경화면 이미지로 생성할 수 있는 React 기반 웹앱입니다.
 
+## Portfolio Demo Account
+
+For portfolio review, you can sign in with the test account below instead of using Google sign-in.
+
+- Demo URL: `https://<your-deployed-url>`
+- Email: `test@test.com `
+- Password: `test123`
+
+Notes:
+
+- Google sign-in is still available for personal use and Google Calendar integration.
+- Replace the demo email, password, and deployed URL with your real review account before submission.
+
 ## Overview
 
 - 월별 비행 일정 입력 및 관리
