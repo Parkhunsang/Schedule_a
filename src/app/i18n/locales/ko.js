@@ -1,7 +1,8 @@
 const ko = {
   common: {
     appTitle: "HAN BI SCHEDULE",
-    appSubtitle: "월별 비행 일정을 관리하고 배경화면까지 한 번에 만들 수 있어요.",
+    appSubtitle:
+      "월별 비행 일정을 관리하고 배경화면까지 한 번에 만들 수 있어요.",
     step: "Step",
     loadingData: "Firebase에서 데이터를 불러오는 중입니다...",
     footer: "HAN BI SCHEDULE | 비행 일정 관리 및 배경화면 생성 앱",
@@ -19,8 +20,7 @@ const ko = {
     signingIn: "로그인 중...",
     demoLabel: "포트폴리오 데모",
     demoTitle: "평가용 테스트 계정으로 로그인",
-    demoDescription:
-      "프로젝트를 검토하시는 분은 안내받은 데모 이메일과 비밀번호로 바로 로그인할 수 있습니다.",
+    demoDescription: "데모 이메일과 비밀번호로 로그인할 수 있습니다.",
     emailLabel: "이메일",
     emailPlaceholder: "데모 이메일을 입력하세요",
     passwordLabel: "비밀번호",
