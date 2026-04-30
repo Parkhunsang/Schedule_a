@@ -6,6 +6,7 @@ import {
 } from "./wallpaper/canvas.js";
 import { withAlpha } from "./wallpaper/color.js";
 import { drawCalendar } from "./wallpaper/calendar.js";
+import { getMonthGrid } from "./wallpaper/date.js";
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -49,6 +50,8 @@ export const generateWallpaperImage = async ({
   const accentColor = backgroundColor;
   const month = MONTH_LABELS[referenceDate.getMonth()];
   const thumbnail = await loadImage(thumbnailImageUrl);
+  const { weekCount } = getMonthGrid(referenceDate);
+  const photoHeight = scale(weekCount > 5 ? 236 : 288);
 
   ctx.fillStyle = backgroundColor;
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -56,7 +59,6 @@ export const generateWallpaperImage = async ({
   const photoX = scale(17);
   const photoY = scale(17);
   const photoWidth = scale(360);
-  const photoHeight = scale(288);
   const photoRadius = scale(20);
 
   fillRoundedRect(

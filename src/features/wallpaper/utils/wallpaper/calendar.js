@@ -61,10 +61,23 @@ const getEventLabel = (schedule) => {
   return getFixedEventTypeLabel(eventType);
 };
 
-const getCellLayout = () => {
+const SIX_WEEK_VERTICAL_OFFSET = 52;
+
+const getCellLayout = (weekCount) => {
   const cardLefts = [13, 65, 117, 169, 221, 273, 325];
-  const dateRows = [346, 438, 530, 622, 714];
-  const cardRows = [366, 458, 550, 642, 734];
+  const rowCount = Math.max(weekCount, 5);
+  const verticalOffset = weekCount > 5 ? SIX_WEEK_VERTICAL_OFFSET : 0;
+  const dateRowStart = 346 - verticalOffset;
+  const cardRowStart = 366 - verticalOffset;
+  const rowGap = 92;
+  const dateRows = Array.from(
+    { length: rowCount },
+    (_, index) => dateRowStart + rowGap * index,
+  );
+  const cardRows = Array.from(
+    { length: rowCount },
+    (_, index) => cardRowStart + rowGap * index,
+  );
   const cardWidth = scale(52);
   const cardBoxHeight = scale(68);
 
@@ -355,12 +368,14 @@ export const drawCalendar = ({
   referenceDate,
   eventTypeColors = DEFAULT_EVENT_TYPE_COLORS,
 }) => {
-  const { year, month, daysInMonth, firstDay } = getMonthGrid(referenceDate);
+  const { year, month, daysInMonth, firstDay, weekCount } =
+    getMonthGrid(referenceDate);
   const calendarX = scale(17);
   const calendarWidth = scale(356);
-  const weekdayTop = scale(312);
-  const dividerY = scale(336);
-  const layout = getCellLayout();
+  const verticalOffset = weekCount > 5 ? SIX_WEEK_VERTICAL_OFFSET : 0;
+  const weekdayTop = scale(312 - verticalOffset);
+  const dividerY = scale(336 - verticalOffset);
+  const layout = getCellLayout(weekCount);
   const dateYAdjustment = scale(2);
   const { dayMap, overlayEvents } = buildScheduleMap(
     schedules,

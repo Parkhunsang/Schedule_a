@@ -35,8 +35,9 @@ export const getMonthGrid = (referenceDate) => {
   const firstDate = new Date(year, month, 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = firstDate.getDay();
+  const weekCount = Math.ceil((firstDay + daysInMonth) / 7);
 
-  return { year, month, daysInMonth, firstDay };
+  return { year, month, daysInMonth, firstDay, weekCount };
 };
 
 export const parseTimeToMinutes = (timeText) => {
